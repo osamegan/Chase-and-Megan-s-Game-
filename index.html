@@ -1676,8 +1676,60 @@
         }
 
         function singlePlayer() {
-            
+            let instruction = document.createElement("H1");
+            instruction.innerHTML = "Please Choose a Name and Color for Your Kingdom";
+            instruction.setAttribute("style", "text-align: center;");
+            document.body.appendChild(instruction);
+            let nameInput = document.createElement("INPUT");
+            nameInput.id = "nameInput";
+            instruction.appendChild(nameInput);
+            let confirm = document.createElement("BUTTON");
+            let playerNameDisplay = document.createElement("P");
+            playerNameDisplay.setAttribute("style", "text-align: center;");
+            playerNameDisplay.id = "playerNameDisplay";
+            document.body.appendChild(playerNameDisplay);
+            confirm.setAttribute("onclick", "setName()");
+            confirm.innerHTML = "Confirm";
+            instruction.appendChild(confirm);
+            displayColorChoices();
+            check();
+            createBoard();
         }
+        
+        function setName() {
+            let playerNameDisplay = document.getElementById('playerNameDisplay');
+            let nameInput = document.getElementById('nameInput');
+            playerNameDisplay.innerHTML = nameInput.value;
+        }
+
+        function displayColorChoices() {
+            document.createElement();
+        }
+
+        function check() {
+
+        }
+
+        function createBoard() {
+            let board = document.createElement("TABLE");
+            let rows = 0;
+            let squareCount = 0;
+            while (squareCount < 20) {
+                let theRow = document.createElement("TR");
+                let square = document.createElement("TD");
+                let button = document.createElement("BUTTON");
+                squareCount % 2 === 0 ? button.setAttrubute("style", "background-color: white") : button.setAttribute("style", "background-color: black");
+                square.appendChild(button);
+                theRow.appendChild(square);
+                squareCount ++;
+            }
+        }
+
+        function multiplayer() {
+
+        }
+
+        
 
     </script>
 </body>
