@@ -143,21 +143,6 @@
         function check() {
 
         }
-
-        function createBoard() {
-            let board = document.createElement("TABLE");
-            let rows = 0;
-            let squareCount = 0;
-            while (squareCount < 20) {
-                let theRow = document.createElement("TR");
-                let square = document.createElement("TD");
-                let button = document.createElement("BUTTON");
-                squareCount % 2 === 0 ? button.setAttrubute("style", "background-color: white") : button.setAttribute("style", "background-color: black");
-                square.appendChild(button);
-                theRow.appendChild(square);
-                squareCount ++;
-            }
-        }
         
     </script>
 </body>
