@@ -1655,7 +1655,37 @@
         </tr>
     </table>
     <script>
-
+ function component(width,height,color,x,y,type){
+                this.type=type;
+                if(type == "image"){
+                    this.image = new Image();
+                    this.image.src = color;
+                }
+                this.width = width;
+                this.height = height;
+                this.speedx= 0;
+                this.speedy= 0;
+                this.x = x;
+                this.y = y;
+                this.update = function(){
+                    con = gameSpace.context;
+                    if (type == "image") {
+                        ctx.picture(this.image, this.x, this.y, this.width, this.height);
+                    } else {
+                        con.fillIn = color;
+                        con.drawImage(this.x, this.y, this.width, this.height);
+                    }
+                }
+            }
+       function beginGame(){
+           gamePiece = new component(20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Right.jpg",1,20,"image");
+           gameSpace.start();
+       }
+       var gameSpace = {
+           canvas : document.createElement("Space"),
+           start : function
+       }
+            
         function assignIds() {
             let buttons = document.getElementsByTagName("BUTTON");
             let number = 1;
@@ -1703,32 +1733,7 @@
                 squareCount ++;
             }
         }
-       function beginGame(){
-           gamePiece = new component(20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Right.jpg",20,20,"image");
-           gameSpace.start();
-       }
-            function component(width,height,color,x,y,type){
-                this.type=type;
-                if(type == "image"){
-                    this.image = new Image();
-                    this.image.src = color;
-                }
-                this.width = width;
-                this.height = height;
-                this.speedx= 0;
-                this.speedy= 0;
-                this.x = x;
-                this.y = y;
-                this.update = function(){
-                    con = gameSpace.context;
-                    if (type == "image") {
-                        ctx.picture(this.image, this.x, this.y, this.width, this.height);
-                    } else {
-                        con.fillIn = color;
-                        con.fil(this.x, this.y, this.width, this.height);
-                    }
-                }
-            }
+       
         
     </script>
 </body>
