@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chase and Megan's Game</title>
 </head>
-<body onload = "setBoard()">
+<body onload = "beginGame()">
 
     <style>
     
@@ -22,23 +22,28 @@
     </style>
 
     <h1 style="text-align: center;">Chess.io</h1>
+
     <script>
  
        var gameSpace = {
-           canvas : document.createElement("Space"),
+           canvas : document.createElement("CANVAS"),
            start : function(){
                this.canvas.width = 20;
                this.canvas.height = 20;
                this.context = this.canvas.getContext("2d");
-               document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+               document.body.appendChild(this.canvas, document.body.childNodes[0]);
            }
        }
-           var gamePiece;
-               function beginGame() {
-                   gameSpace.start();
-                   gamePiece = new component (20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg",1,1,"image")
-               }
-       function component(width,height,color,x,y,type){
+
+        var gamePiece;
+
+           function beginGame() {
+                gameSpace.start();
+                gamePiece = new component (20 ,20, "H:\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg", 1, 1, "image");
+           }
+
+       function component(width, height, color, x, y, type) {
+
        }
 
         function setBoard() {
@@ -54,7 +59,7 @@
         function createBoard () {
             let letterNum = 1;
             let number = 1;
-            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
             let board = document.createElement("TABLE");
             for (let columnLength = 0; columnLength < 20; columnLength ++) {
                 let column = document.createElement("TR");
@@ -76,6 +81,7 @@
                 letterNum ++;
             }
             board.setAttribute("style", "margin: auto;");
+            board.id = "chessboard";
             document.body.appendChild(board);
         }
 
