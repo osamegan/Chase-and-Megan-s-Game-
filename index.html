@@ -1674,28 +1674,7 @@
                 number ++;
             }
         }
-
-        function singlePlayer() {
-            let instruction = document.createElement("H1");
-            instruction.innerHTML = "Please Choose a Name and Color for Your Kingdom";
-            instruction.setAttribute("style", "text-align: center;");
-            document.body.appendChild(instruction);
-            let nameInput = document.createElement("INPUT");
-            nameInput.id = "nameInput";
-            instruction.appendChild(nameInput);
-            let confirm = document.createElement("BUTTON");
-            let playerNameDisplay = document.createElement("P");
-            playerNameDisplay.setAttribute("style", "text-align: center;");
-            playerNameDisplay.id = "playerNameDisplay";
-            document.body.appendChild(playerNameDisplay);
-            confirm.setAttribute("onclick", "setName()");
-            confirm.innerHTML = "Confirm";
-            instruction.appendChild(confirm);
-            displayColorChoices();
-            check();
-            createBoard();
-        }
-        
+ 
         function setName() {
             let playerNameDisplay = document.getElementById('playerNameDisplay');
             let nameInput = document.getElementById('nameInput');
@@ -1723,10 +1702,6 @@
                 theRow.appendChild(square);
                 squareCount ++;
             }
-        }
-
-        function multiplayer() {
-
         }
        function beginGame(){
            gamePiece = new component(20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Right.jpg",20,20,"image");
