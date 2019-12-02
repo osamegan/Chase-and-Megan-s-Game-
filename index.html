@@ -23,6 +23,22 @@
 
     <h1 style="text-align: center;">Chess.io</h1>
     <script>
+ 
+       var gameSpace = {
+           canvas : document.createElement("Space"),
+           start : function(){
+               this.canvas.width = 20;
+               this.canvas.height = 20;
+               this.context = this.canvas.getContext("2d");
+               document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+           }
+       }
+           var gamePiece;
+               function beginGame() {
+                   gameSpace.start();
+                   gamePiece = new component (20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg",1,1,"image")
+               }
+       function component(width,height,color,x,y,type){
 
         function setBoard() {
             createBoard();
@@ -91,6 +107,55 @@
                     con.fillIn = color;
                     con.fil(this.x, this.y, this.width, this.height);
                 }
+            }
+
+        }
+           
+        function assignIds() {
+            let buttons = document.getElementsByTagName("BUTTON");
+            let number = 1;
+            let letterNum = 1;
+            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+            for (let id in buttons) {
+                let button = buttons[id];
+                if (button === 400) {
+                    return;
+                }
+                button.setAttribute("id", `${letters[letterNum - 1]}${number}`);
+                if (number === 20) {
+                    number = 0;
+                    letterNum ++;
+                }
+                number ++;
+            }
+        }
+ 
+        function setName() {
+            let playerNameDisplay = document.getElementById('playerNameDisplay');
+            let nameInput = document.getElementById('nameInput');
+            playerNameDisplay.innerHTML = nameInput.value;
+        }
+
+        function displayColorChoices() {
+            document.createElement();
+        }
+
+        function check() {
+
+        }
+
+        function createBoard() {
+            let board = document.createElement("TABLE");
+            let rows = 0;
+            let squareCount = 0;
+            while (squareCount < 20) {
+                let theRow = document.createElement("TR");
+                let square = document.createElement("TD");
+                let button = document.createElement("BUTTON");
+                squareCount % 2 === 0 ? button.setAttrubute("style", "background-color: white") : button.setAttribute("style", "background-color: black");
+                square.appendChild(button);
+                theRow.appendChild(square);
+                squareCount ++;
             }
         }
         
