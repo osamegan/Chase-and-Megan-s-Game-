@@ -1655,7 +1655,22 @@
         </tr>
     </table>
     <script>
- function component(width,height,color,x,y,type){
+ 
+       var gameSpace = {
+           canvas : document.createElement("Space"),
+           start : function(){
+               this.canvas.width = 20;
+               this.canvas.height = 20;
+               this.context = this.canvas.getContext("2d");
+               document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+           }
+       }
+           var gamePiece;
+               function beginGame() {
+                   gameSpace.start();
+                   gamePiece = new component (20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg",1,1,"image")
+               }
+       function component(width,height,color,x,y,type){
                 this.type=type;
                 if(type == "image"){
                     this.image = new Image();
@@ -1677,15 +1692,9 @@
                     }
                 }
             }
-       function beginGame(){
-           gamePiece = new component(20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Right.jpg",1,20,"image");
-           gameSpace.start();
-       }
-       var gameSpace = {
-           canvas : document.createElement("Space"),
-           start : function
-       }
-            
+
+        }
+           
         function assignIds() {
             let buttons = document.getElementsByTagName("BUTTON");
             let number = 1;
