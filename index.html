@@ -24,23 +24,6 @@
     <h1 style="text-align: center;">Chess.io</h1>
     <script>
  
-       var gameSpace = {
-           canvas : document.createElement("Space"),
-           start : function(){
-               this.canvas.width = 20;
-               this.canvas.height = 20;
-               this.context = this.canvas.getContext("2d");
-               document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-           }
-       }
-           var gamePiece;
-               function beginGame() {
-                   gameSpace.start();
-                   gamePiece = new component (20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg",1,1,"image")
-               }
-       function component(width,height,color,x,y,type){
-       }
-
         function setBoard() {
             createBoard();
             let start = document.createElement("BUTTON");
@@ -80,35 +63,6 @@
         }
 
         function setPieces() {
-
-        }
-
-       function beginGame() {
-           gamePiece = new component(20,20,"H:\Chase-and-Megan-s-Game-\Orange Ghost - Right.jpg",20,20,"image");
-           gameSpace.start();
-       }
-
-        function component(width, height, color, x, y, type) {
-            this.type = type;
-            if (type == "image") {
-                this.image = new Image();
-                this.image.src = color;
-            }
-            this.width = width;
-            this.height = height;
-            this.speedx= 0;
-            this.speedy= 0;
-            this.x = x;
-            this.y = y;
-            this.update = function(){
-                con = gameSpace.context;
-                if (type == "image") {
-                    ctx.picture(this.image, this.x, this.y, this.width, this.height);
-                } else {
-                    con.fillIn = color;
-                    con.fil(this.x, this.y, this.width, this.height);
-                }
-            }
 
         }
         
