@@ -7,20 +7,90 @@
     <title>Document</title>
 </head>
 <body>
-        var gameSpace = {
-            canvas : document.createElement("Space"),
-            start : function(){
-                this.canvas.width = 20;
-                this.canvas.height = 20;
-                this.context = this.canvas.getContext("2d");
-                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-            }
-        }
-            var gamePiece;
-                function beginGame() {
-                    gameSpace.start();
-                    gamePiece = new component (20,20,"Orange-Ghost -Left.jpg",1,1,"image")
-                }
+
+
+<!-- <canvas id="canvas" height="600" width="600"></canvas> -->
+
+    <script> 
+    // var gamePiece;
+    // function beginGame() {
+    //     gamePiece = new component (30,30,"orange",10,110)
+    //                 gameSpace.start();
+    //                 var gameSpace = {
+    //                     canvas : document.createElement("canvas"),
+    //                     start : function() {
+    //                         this.canvas.width = 600;
+    //                         this.canvas.height = 600;
+    //                         this.con = this.canvas.getContext("2d");
+    //                         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    //                         this.interval = setInterval(updateGameArea, 20);
+    //                     },
+    //                     clear : function() {
+    //                         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    //                     }
+    //                 }
+    //             function component(width,height,color,x,y) {
+    //                 this.width = width;
+    //                 this.height = height;
+    //                 this.x = x;
+    //                 this.y = y;
+    //                 this.update = function(){
+    //                 con = gameSpace.context;
+    //                 con.fillStyle = color;
+    //                 con.fillRect(this.x,this.y,this.width,this.height);
+    //                 }
+    //             }
+    //             function adjust() {
+    //                 gameSpace.clear();
+    //                 gamePiece.x += 1;
+    //                 gamePiece.update();
+    //             }
+    // }   
+    //            beginGame();
+
+    var myGamePiece;
+
+function startGame() {
+    myGamePiece = new component(30, 30, "red", 10, 120);
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.interval = setInterval(updateGameArea, 20);
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;    
+    this.update = function(){
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+}
+
+function updateGameArea() {
+    myGameArea.clear();
+    myGamePiece.x += 1;
+    myGamePiece.update();
+}
+
+startGame()
+
+
+</script>
                 
 </body>
 </html>
