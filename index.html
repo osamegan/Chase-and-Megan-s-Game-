@@ -18,51 +18,124 @@
         color: white;
         width:fit-content;
     }
-    
+
+    .chessboard{
+        width: 600px;
+        height: 550px;
+        border: 1px solid black;
+        margin: 0% 35%;
+    }
+
     </style>
 
     <h1 style="text-align: center;">Chess.io</h1>
+
+    <img id="redRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Red Ghost - Left.jpg" alt="Rook">
+    <img id="blueRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Blue Ghost - Left.jpg" alt="Rook">
+    <img id="pinkRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Pink Ghost - Left.jpg" alt="Rook">
+    <img id="orangeRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg" alt="Rook">
+
+    <img id="redBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
+    <img id="blueBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
+    <img id="pinkBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
+    <img id="orangeBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
+
+    <img id="redKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Left.jpg" alt="Rook">
+    <img id="blueKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Left.jpg" alt="Rook">
+    <img id="pinkKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gray Ghost - Left.jpg" alt="Rook">
+    <img id="orangeKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Left.jpg" alt="Rook">
+
+    <img id="redKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Right.jpg" alt="Rook">
+    <img id="blueKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Sliver Ghost - Right.jpg" alt="Rook">
+    <img id="pinkKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gray Ghost - Right.jpg" alt="Rook">
+    <img id="orangeKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="Rook">
+
     <script>
- 
+
         function setBoard() {
             createBoard();
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
             start.innerHTML = "Start Game";
-            start.setAttribute("onclick", "beginGame()");
+            start.setAttribute("onclick", "start()");
             document.body.appendChild(start);
-            setPieces();
+            chooseColor();
         }
 
         function createBoard () {
-            let letterNum = 1;
-            let number = 1;
-            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
-            let board = document.createElement("TABLE");
-            for (let columnLength = 0; columnLength < 20; columnLength ++) {
-                let column = document.createElement("TR");
-                for (let rowLength = 0; rowLength < 20; rowLength ++) {
-                    let row = document.createElement("TD");
-                    let tile = document.createElement("BUTTON");
-                    tile.id = `${letters[letterNum - 1]}${number}`;
-                    if (columnLength  % 2 === 0) {
-                        rowLength % 2 === 0 ? tile.setAttribute("style", "background-color: white; width: 30px; height: 30px;") : tile.setAttribute("style", "background-color: black; width: 30px; height: 30px;");
-                    } else {
-                        rowLength % 2 != 0 ? tile.setAttribute("style", "background-color: white; width: 30px; height: 30px;") : tile.setAttribute("style", "background-color: black; width: 30px; height: 30px;");
-                    }
-                    row.appendChild(tile);
-                    column.appendChild(row);
-                    number ++;
+            let board = document.createElement("CANVAS");
+            board.id = "board";
+            board.setAttribute("class", "chessboard");
+            let ctx = board.getContext("2d");
+            for (let y = 0; y <= 600; y += 7.5) {
+                for (let x = 0; x <= 550; x += 15) {
+                    (x/15) % 2 === 0 && (y/7.5) % 2 != 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
+                    (x/15) % 2 != 0 && (y/7.5) % 2 === 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
                 }
-                board.appendChild(column);
-                number = 0;
-                letterNum ++;
             }
-            board.setAttribute("style", "margin: auto;");
             document.body.appendChild(board);
         }
 
-        function setPieces() {
+        function chooseColor() {
+            let color1 = "red";
+            let color2 = "blue";
+            let color3 = "pink";
+            let color4 = "orange";
+            setPieces(color1, color2, color3, color4);
+        }
+
+        function setPieces(color1, color2, color3, color4) {
+            let board = document.getElementById("board");
+            let ctx = board.getContext("2d");
+            let colors = [color1, color2, color3, color4];
+            for (let playersWithColor = 0; playersWithColor < 4; playersWithColor ++) {
+                let currentColor = colors[playersWithColor];
+                let rook = document.getElementById(`${currentColor}Rook`);
+                let bishop = document.getElementById(`${currentColor}Bishop`);
+                let knight = document.getElementById(`${currentColor}Knight`);
+                let king = document.getElementById(`${currentColor}King`);
+                switch(playersWithColor) {
+                    case 0:
+                        ctx.drawImage(rook, 2.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 3.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 5.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 6.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 7.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 8.5, 1.25, 10, 5);
+                        ctx.drawImage(king, 9.5, 1.25, 10, 5);
+                        break;
+                    case 1:
+                    ctx.drawImage(rook, 10.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 11.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 12.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 13.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 14.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 15.5, 1.25, 10, 5);
+                        ctx.drawImage(king, 16.5, 1.25, 10, 5);
+                        break;
+                    case 2:
+                    ctx.drawImage(rook, 17.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 18.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 19.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 20.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 21.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 22.5, 1.25, 10, 5);
+                        ctx.drawImage(king, 23.5, 1.25, 10, 5);
+                        break;
+                    case 3:
+                    ctx.drawImage(rook, 24.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 25.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 26.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 27.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 28.5, 1.25, 10, 5);
+                        ctx.drawImage(knight, 29.5, 1.25, 10, 5);
+                        ctx.drawImage(king, 30.5, 1.25, 10, 5);
+                        break;
+                }
+            }
+        }
+
+        function start() {
 
         }
         
