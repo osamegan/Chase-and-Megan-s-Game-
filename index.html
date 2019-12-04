@@ -35,30 +35,33 @@
     <img id="pinkRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Pink Ghost - Left.jpg" alt="Rook">
     <img id="orangeRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg" alt="Rook">
 
-    <img id="redBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
-    <img id="blueBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
-    <img id="pinkBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
-    <img id="orangeBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Rook">
+    <img id="redBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
+    <img id="blueBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
+    <img id="pinkBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
+    <img id="orangeBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
 
-    <img id="redKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Left.jpg" alt="Rook">
-    <img id="blueKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Left.jpg" alt="Rook">
-    <img id="pinkKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gray Ghost - Left.jpg" alt="Rook">
-    <img id="orangeKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Left.jpg" alt="Rook">
+    <img id="redKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Left.jpg" alt="Knight">
+    <img id="blueKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Left.jpg" alt="Knight">
+    <img id="pinkKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Left.jpg" alt="Knight">
+    <img id="orangeKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Left.jpg" alt="Knight">
 
-    <img id="redKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Right.jpg" alt="Rook">
-    <img id="blueKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Sliver Ghost - Right.jpg" alt="Rook">
-    <img id="pinkKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gray Ghost - Right.jpg" alt="Rook">
-    <img id="orangeKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="Rook">
+    <img id="redKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Right.jpg" alt="King">
+    <img id="blueKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Right.jpg" alt="King">
+    <img id="pinkKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Right.jpg" alt="King">
+    <img id="orangeKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="King">
 
     <script>
 
+        var chessPiece = {};
+
         function setBoard() {
-            createBoard();
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
+            start.id = "start";
             start.innerHTML = "Start Game";
             start.setAttribute("onclick", "start()");
             document.body.appendChild(start);
+            createBoard();
             chooseColor();
         }
 
@@ -66,6 +69,7 @@
             let board = document.createElement("CANVAS");
             board.id = "board";
             board.setAttribute("class", "chessboard");
+            let start = document.getElementById("start");
             let ctx = board.getContext("2d");
             for (let y = 0; y <= 600; y += 7.5) {
                 for (let x = 0; x <= 550; x += 15) {
@@ -73,7 +77,7 @@
                     (x/15) % 2 != 0 && (y/7.5) % 2 === 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
                 }
             }
-            document.body.appendChild(board);
+            document.body.insertBefore(board, start);
         }
 
         function chooseColor() {
@@ -94,45 +98,65 @@
                 let bishop = document.getElementById(`${currentColor}Bishop`);
                 let knight = document.getElementById(`${currentColor}Knight`);
                 let king = document.getElementById(`${currentColor}King`);
+                chessPiece.image = new Image();
+                chessPiece.image.src = rook.src;
+                chessPiece.speedY = -7.5;
+                chessPiece.x = 257.25;
+                chessPiece.y = 135.5;
                 switch(playersWithColor) {
                     case 0:
-                        ctx.drawImage(rook, 2.5, 1.25, 10, 5);
-                        ctx.drawImage(rook, 3.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 5.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 6.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 7.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 8.5, 1.25, 10, 5);
-                        ctx.drawImage(king, 9.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 32.5, 8.75, 10, 5);
+                        ctx.drawImage(rook, 2.5, 16.25, 10, 5);
+                        ctx.drawImage(bishop, 32.5, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 17.5, 16.25, 10, 5);
+                        ctx.drawImage(knight, 17.5, 8.75, 10, 5);
+                        ctx.drawImage(knight, 32.5, 16.25, 10, 5);
+                        ctx.drawImage(king, 2.5, 1.25, 10, 5);
                         break;
                     case 1:
-                    ctx.drawImage(rook, 10.5, 1.25, 10, 5);
-                        ctx.drawImage(rook, 11.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 12.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 13.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 14.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 15.5, 1.25, 10, 5);
-                        ctx.drawImage(king, 16.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 287.25, 16.25, 10, 5);
+                        ctx.drawImage(rook, 257.25, 8.75, 10, 5);
+                        ctx.drawImage(bishop, 257.25, 1.25, 10, 5);
+                        ctx.drawImage(bishop, 272.25, 16.25, 10, 5);
+                        ctx.drawImage(knight, 272.25, 8.75, 10, 5);
+                        ctx.drawImage(knight, 257.25, 16.25, 10, 5);
+                        ctx.drawImage(king, 287.25, 1.25, 10, 5);
                         break;
                     case 2:
-                    ctx.drawImage(rook, 17.5, 1.25, 10, 5);
-                        ctx.drawImage(rook, 18.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 19.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 20.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 21.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 22.5, 1.25, 10, 5);
-                        ctx.drawImage(king, 23.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 32.5, 135.5, 10, 5);
+                        ctx.drawImage(rook, 2.5, 128.5, 10, 5);
+                        ctx.drawImage(bishop, 32.5, 144, 10, 5);
+                        ctx.drawImage(bishop, 17.5, 128.5, 10, 5);
+                        ctx.drawImage(knight, 32.5, 128.5, 10, 5);
+                        ctx.drawImage(knight, 17.5, 135.5, 10, 5);
+                        ctx.drawImage(king, 2.5, 144, 10, 5);
                         break;
                     case 3:
-                    ctx.drawImage(rook, 24.5, 1.25, 10, 5);
-                        ctx.drawImage(rook, 25.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 26.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 27.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 28.5, 1.25, 10, 5);
-                        ctx.drawImage(knight, 29.5, 1.25, 10, 5);
-                        ctx.drawImage(king, 30.5, 1.25, 10, 5);
+                        ctx.drawImage(rook, 257.25, 135.5, 10, 5);
+                        ctx.drawImage(rook, 287.25, 128.5, 10, 5);
+                        ctx.drawImage(bishop, 257.25, 144, 10, 5);
+                        ctx.drawImage(bishop, 272.25, 128.5, 10, 5);
+                        ctx.drawImage(knight, 257.25, 128.5, 10, 5);
+                        ctx.drawImage(knight, 272.25, 135.5, 10, 5);
+                        ctx.drawImage(king, 287.25, 144, 10, 5);
                         break;
                 }
             }
+            let button = document.createElement("BUTTON");
+            button.innerHTML = "Move";
+            button.id = "move";
+            button.setAttribute("onclick", "updatePosition()");
+            document.body.appendChild(button);
+        }
+
+        function updatePosition() {
+            let board = document.getElementById("board");
+            document.body.removeChild(board);
+            createBoard();
+            chessPiece.y += chessPiece.speedY;
+            let newBoard = document.getElementById("board");
+            let ctx = newBoard.getContext("2d");
+            ctx.drawImage(chessPiece.image, chessPiece.x, chessPiece.y, 10, 5);
         }
 
         function start() {
