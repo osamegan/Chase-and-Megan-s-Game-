@@ -51,8 +51,12 @@
     <img id="orangeKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="King">
 
     <script>
-
-        var chessPiece = {};
+        
+        let board = document.createElement("CANVAS");
+        board.id = "board";
+        board.setAttribute("class", "chessboard");
+        let ctx = board.getContext("2d");
+        let boardIds = {};
 
         function setBoard() {
             let start = document.createElement("BUTTON");
@@ -66,11 +70,7 @@
         }
 
         function createBoard () {
-            let board = document.createElement("CANVAS");
-            board.id = "board";
-            board.setAttribute("class", "chessboard");
             let start = document.getElementById("start");
-            let ctx = board.getContext("2d");
             for (let y = 0; y <= 600; y += 7.5) {
                 for (let x = 0; x <= 550; x += 15) {
                     (x/15) % 2 === 0 && (y/7.5) % 2 != 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
@@ -78,6 +78,27 @@
                 }
             }
             document.body.insertBefore(board, start);
+            assignIds();
+        }
+
+        function assignIds() {
+            let letterNum = 0;
+            let number = 1;
+            let x = 2.5;
+            let y = 1.25;
+            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
+            for (let id = 0; id < 400; id ++) {
+                 boardIds[`${letters[letterNum]}${number}`] = {"x-val": null, "y-val": null};
+                 boardIds[`${letters[letterNum]}${number}`]["x-val"] = x;
+                 boardIds[`${letters[letterNum]}${number}`]["y-val"] = y;
+                 x += 2.5;
+                 y += 1.25;
+                if (number === 20) {
+                    number = 0;
+                    letterNum ++;
+                }
+                number ++;
+            }
         }
 
         function chooseColor() {
@@ -89,8 +110,6 @@
         }
 
         function setPieces(color1, color2, color3, color4) {
-            let board = document.getElementById("board");
-            let ctx = board.getContext("2d");
             let colors = [color1, color2, color3, color4];
             for (let playersWithColor = 0; playersWithColor < 4; playersWithColor ++) {
                 let currentColor = colors[playersWithColor];
@@ -98,11 +117,6 @@
                 let bishop = document.getElementById(`${currentColor}Bishop`);
                 let knight = document.getElementById(`${currentColor}Knight`);
                 let king = document.getElementById(`${currentColor}King`);
-                chessPiece.image = new Image();
-                chessPiece.image.src = rook.src;
-                chessPiece.speedY = -7.5;
-                chessPiece.x = 257.25;
-                chessPiece.y = 135.5;
                 switch(playersWithColor) {
                     case 0:
                         ctx.drawImage(rook, 32.5, 8.75, 10, 5);
@@ -142,21 +156,12 @@
                         break;
                 }
             }
-            let button = document.createElement("BUTTON");
-            button.innerHTML = "Move";
-            button.id = "move";
-            button.setAttribute("onclick", "updatePosition()");
-            document.body.appendChild(button);
         }
 
-        function updatePosition() {
-            let board = document.getElementById("board");
-            document.body.removeChild(board);
-            createBoard();
-            chessPiece.y += chessPiece.speedY;
-            let newBoard = document.getElementById("board");
-            let ctx = newBoard.getContext("2d");
-            ctx.drawImage(chessPiece.image, chessPiece.x, chessPiece.y, 10, 5);
+        function moveTo(piece, square) {
+            let x = boardIds[square]["x-val"];
+            let y = boardIds[square]["y-val"];
+            ctx.drawImage(piece, x, y, 10, 5);
         }
 
         function start() {
