@@ -30,25 +30,22 @@
 
     <h1 style="text-align: center;">Chess.io</h1>
 
-    <img id="redRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Red Ghost - Left.jpg" alt="Rook">
-    <img id="blueRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Blue Ghost - Left.jpg" alt="Rook">
-    <img id="pinkRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Pink Ghost - Left.jpg" alt="Rook">
-    <img id="orangeRook" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg" alt="Rook">
-
-    <img id="redBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
-    <img id="blueBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
-    <img id="pinkBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
-    <img id="orangeBishop" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="Bishop">
-
-    <img id="redKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Left.jpg" alt="Knight">
-    <img id="blueKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Left.jpg" alt="Knight">
-    <img id="pinkKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Left.jpg" alt="Knight">
-    <img id="orangeKnight" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Left.jpg" alt="Knight">
-
-    <img id="redKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Right.jpg" alt="King">
-    <img id="blueKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Right.jpg" alt="King">
-    <img id="pinkKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Right.jpg" alt="King">
-    <img id="orangeKing" width="0" height="0" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="King">
+    <img id = "redRook" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Red Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "blueRook" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Blue Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "pinkRook" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Pink Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "orangeRook" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Orange Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "redKnight" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "blueKnight" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "pinkKnight" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "orangeKnight" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Left.jpg" alt="" height = 0px width = 0px>
+    <img id = "redBishop" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="" height = 0px width = 0px>
+    <img id = "blueBishop" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="" height = 0px width = 0px>
+    <img id = "pinkBishop" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="" height = 0px width = 0px>
+    <img id = "orangeBishop" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Scared Ghost.jpg" alt="" height = 0px width = 0px>
+    <img id = "redKing" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Gold Ghost - Right.jpg" alt="" height = 0px width = 0px>
+    <img id = "blueKing" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Silver Ghost - Right.jpg" alt="" height = 0px width = 0px>
+    <img id = "pinkKing" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\White Ghost - Right.jpg" alt="" height = 0px width = 0px>
+    <img id = "orangeKing" src="H:\Board Game Project\Chess.io\Chase-and-Megan-s-Game-\Yellow Ghost - Right.jpg" alt="" height = 0px width = 0px>
 
     <script>
         
@@ -57,6 +54,7 @@
         board.setAttribute("class", "chessboard");
         let ctx = board.getContext("2d");
         let boardIds = {};
+        let chessPieces = [];
 
         function setBoard() {
             let start = document.createElement("BUTTON");
@@ -91,10 +89,11 @@
                  boardIds[`${letters[letterNum]}${number}`] = {"x-val": null, "y-val": null};
                  boardIds[`${letters[letterNum]}${number}`]["x-val"] = x;
                  boardIds[`${letters[letterNum]}${number}`]["y-val"] = y;
-                 x += 2.5;
-                 y += 1.25;
+                 x += 15;
                 if (number === 20) {
                     number = 0;
+                    x = 2.5;
+                    y += 7.5;
                     letterNum ++;
                 }
                 number ++;
@@ -106,54 +105,39 @@
             let color2 = "blue";
             let color3 = "pink";
             let color4 = "orange";
-            setPieces(color1, color2, color3, color4);
+            setPieces([color1, color2, color3, color4]);
         }
 
-        function setPieces(color1, color2, color3, color4) {
-            let colors = [color1, color2, color3, color4];
-            for (let playersWithColor = 0; playersWithColor < 4; playersWithColor ++) {
-                let currentColor = colors[playersWithColor];
-                let rook = document.getElementById(`${currentColor}Rook`);
-                let bishop = document.getElementById(`${currentColor}Bishop`);
-                let knight = document.getElementById(`${currentColor}Knight`);
-                let king = document.getElementById(`${currentColor}King`);
-                switch(playersWithColor) {
-                    case 0:
-                        ctx.drawImage(rook, 32.5, 8.75, 10, 5);
-                        ctx.drawImage(rook, 2.5, 16.25, 10, 5);
-                        ctx.drawImage(bishop, 32.5, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 17.5, 16.25, 10, 5);
-                        ctx.drawImage(knight, 17.5, 8.75, 10, 5);
-                        ctx.drawImage(knight, 32.5, 16.25, 10, 5);
-                        ctx.drawImage(king, 2.5, 1.25, 10, 5);
-                        break;
-                    case 1:
-                        ctx.drawImage(rook, 287.25, 16.25, 10, 5);
-                        ctx.drawImage(rook, 257.25, 8.75, 10, 5);
-                        ctx.drawImage(bishop, 257.25, 1.25, 10, 5);
-                        ctx.drawImage(bishop, 272.25, 16.25, 10, 5);
-                        ctx.drawImage(knight, 272.25, 8.75, 10, 5);
-                        ctx.drawImage(knight, 257.25, 16.25, 10, 5);
-                        ctx.drawImage(king, 287.25, 1.25, 10, 5);
-                        break;
-                    case 2:
-                        ctx.drawImage(rook, 32.5, 135.5, 10, 5);
-                        ctx.drawImage(rook, 2.5, 128.5, 10, 5);
-                        ctx.drawImage(bishop, 32.5, 144, 10, 5);
-                        ctx.drawImage(bishop, 17.5, 128.5, 10, 5);
-                        ctx.drawImage(knight, 32.5, 128.5, 10, 5);
-                        ctx.drawImage(knight, 17.5, 135.5, 10, 5);
-                        ctx.drawImage(king, 2.5, 144, 10, 5);
-                        break;
-                    case 3:
-                        ctx.drawImage(rook, 257.25, 135.5, 10, 5);
-                        ctx.drawImage(rook, 287.25, 128.5, 10, 5);
-                        ctx.drawImage(bishop, 257.25, 144, 10, 5);
-                        ctx.drawImage(bishop, 272.25, 128.5, 10, 5);
-                        ctx.drawImage(knight, 257.25, 128.5, 10, 5);
-                        ctx.drawImage(knight, 272.25, 135.5, 10, 5);
-                        ctx.drawImage(king, 287.25, 144, 10, 5);
-                        break;
+        function setPieces(colors) {
+            for (let timesRun = 0; timesRun < 2; timesRun ++) {
+                for (let color of colors) {
+                    let rook = {};
+                    rook.image = new Image();
+                    rook.image.src = document.getElementById(`${color}Rook`).src;
+                    rook.id = `${color}Rook${timesRun + 1}`;
+                    chessPieces.push(rook);
+                    let bishop = {};
+                    bishop.image = new Image();
+                    bishop.image.src = document.getElementById(`${color}Bishop`).src;
+                    bishop.id = `${color}Bishop${timesRun + 1}`;
+                    chessPieces.push(bishop);
+                    let knight = {};
+                    knight.image = new Image();
+                    knight.image.src = document.getElementById(`${color}Knight`).src;
+                    knight.id = `${color}Knight${timesRun + 1}`;
+                    chessPieces.push(knight);
+                    let king = {};
+                    king.image = new Image();
+                    king.image.src = document.getElementById(`${color}King`).src;
+                    king.id = `${color}King${timesRun + 1}`;
+                    chessPieces.push(king);
+                }
+        }
+            let positions = ["C1", "B3", "C2", "A3", "B2", "C3", "A1", "B18", "C20", "A18", "C19", "C18", "B19", "A20", "R1", "S3", "R2", "T3", "S2", "R3", "T1", "S18", "R20", "T18", "R19", "R18", "S19", "T20"];
+            for (let pieces in chessPieces) {
+                let position = positions[pieces];
+                if (position) {
+                    moveTo(chessPieces[pieces].image, position);
                 }
             }
         }
