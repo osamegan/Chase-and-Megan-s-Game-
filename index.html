@@ -109,30 +109,15 @@
         }
 
         function setPieces(colors) {
-            for (let timesRun = 0; timesRun < 2; timesRun ++) {
-                for (let color of colors) {
-                    let rook = {};
-                    rook.image = new Image();
-                    rook.image.src = document.getElementById(`${color}Rook`).src;
-                    rook.id = `${color}Rook${timesRun + 1}`;
-                    chessPieces.push(rook);
-                    let bishop = {};
-                    bishop.image = new Image();
-                    bishop.image.src = document.getElementById(`${color}Bishop`).src;
-                    bishop.id = `${color}Bishop${timesRun + 1}`;
-                    chessPieces.push(bishop);
-                    let knight = {};
-                    knight.image = new Image();
-                    knight.image.src = document.getElementById(`${color}Knight`).src;
-                    knight.id = `${color}Knight${timesRun + 1}`;
-                    chessPieces.push(knight);
-                    let king = {};
-                    king.image = new Image();
-                    king.image.src = document.getElementById(`${color}King`).src;
-                    king.id = `${color}King${timesRun + 1}`;
-                    chessPieces.push(king);
-                }
-        }
+            for (let color of colors) {
+                createPiece('Rook', color, 1);
+                createPiece('Rook', color, 2);
+                createPiece('Bishop', color, 1);
+                createPiece('Bishop', color, 2)
+                createPiece('Knight', color, 1);
+                createPiece('Knight', color, 2);
+                createPiece('King', color, 1);
+            }
             let positions = ["C1", "B3", "C2", "A3", "B2", "C3", "A1", "B18", "C20", "A18", "C19", "C18", "B19", "A20", "R1", "S3", "R2", "T3", "S2", "R3", "T1", "S18", "R20", "T18", "R19", "R18", "S19", "T20"];
             for (let pieces in chessPieces) {
                 let position = positions[pieces];
@@ -142,6 +127,14 @@
             }
         }
 
+        function createPiece(type, color, number) {
+            let piece = {};
+            piece.image = new Image();
+            piece.image.src = document.getElementById(`${color}${type}`).src;
+            piece.id = `${color}${type}${number}`;
+            chessPieces.push(piece);
+        }
+
         function moveTo(piece, square) {
             let x = boardIds[square]["x-val"];
             let y = boardIds[square]["y-val"];
@@ -149,7 +142,7 @@
         }
 
         function start() {
-
+            
         }
         
     </script>
