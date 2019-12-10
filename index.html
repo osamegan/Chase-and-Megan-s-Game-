@@ -30,10 +30,6 @@
             </script>
 </head>
 <body onload = "beginGame()">
-        <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-        <br>
-        <img id="drag1" src="" draggable="true" ondragstart="drag(event)" width="20" height="20">
-        
 <body onload = "setBoard()">
 
     <style>
@@ -172,30 +168,58 @@
         function start() {
             
         }
-       
-<script>
-function allowDrop(ev) {
-  ev.preventDefault();
-}
+        <style>
+    #div1 {
+      width: 15px;
+      height: 7.5px;
+      padding: 10px;
+      border: 1px solid #aaaaaa;
+    }
+    </style>
+ <script>
+ function allowDrop(ev) {
+              ev.preventDefault();
+            }
+            
+            function drag(ev) {
+              ev.dataTransfer.setData("text", ev.target.id);
+            }
+            
+            function drop(ev) {
+              ev.preventDefault();
+              var data = ev.dataTransfer.getData("text");
+              ev.target.appendChild(document.getElementById(data));
+            }
+            </script>
+                 <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                 <br>
+                 <img id="drag1" src="https://i.pinimg.com/originals/2c/ff/ab/2cffabfc494f1ee7d5945c7b6193e934.png" draggable="true" ondragstart="drag(event)" width="20" height="20">
 
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
-}
-</script>
-</head>
-<body>
-<div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-<br>
-<img id="drag1" src="https://i.pinimg.com/originals/2c/ff/ab/2cffabfc494f1ee7d5945c7b6193e934.png" draggable="true" ondragstart="drag(event)" width="20" height="20">
-
-</body>
-</html>        
-    </script>
+                 <style>
+                    #div2 {
+                      width: 15px;
+                      height: 7.5px;
+                      padding: 10px;
+                      border: 1px solid #aaaaaa;
+                    }
+                    </style>
+                 <script>
+                 function allowDrop(ev) {
+                              ev.preventDefault();
+                            }
+                            
+                            function drag(ev) {
+                              ev.dataTransfer.setData("text", ev.target.id);
+                            }
+                            
+                            function drop(ev) {
+                              ev.preventDefault();
+                              var data = ev.dataTransfer.getData("text");
+                              ev.target.appendChild(document.getElementById(data));
+                            }
+                            </script>
+                                 <div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                                 <br>
+                                 <img id="drag2" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/80ce0aaf-a48f-4946-b0e0-775c5ae3104b/dbcejhu-77f4012f-c339-441a-ada0-2aa47705381f.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzgwY2UwYWFmLWE0OGYtNDk0Ni1iMGUwLTc3NWM1YWUzMTA0YlwvZGJjZWpodS03N2Y0MDEyZi1jMzM5LTQ0MWEtYWRhMC0yYWE0NzcwNTM4MWYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.I6voUiVII2P9f-rMe0go0FgJ3xFZ-2LZrCyy6f0u9co" draggable="true" ondragstart="drag(event)" width="20" height="20">
 </body>
 </html>
