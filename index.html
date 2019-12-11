@@ -48,9 +48,30 @@
 
     .chessboard {
         width: 600px;
-        height: 550px;
+        height: 600px;
+        margin: auto;
+    }
+
+    .whiteTile {
         border: 1px solid black;
-        margin: 0% 35%;
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        padding: 0%;
+    }
+
+    .blackTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: black;
+        padding: 0%;
+        margin: 0%;
+    }
+
+    .packed {
+        padding: 0%;
+        margin: 0%;
     }
 
     </style>
@@ -73,14 +94,11 @@
     <img id = "blueKing" src="Blue King.png" alt="" height = 0px width = 0px>
     <img id = "pinkKing" src="Pink King.png" alt="" height = 0px width = 0px>
     <img id = "orangeKing" src="Orange King.png" alt="" height = 0px width = 0px>
-
+<table id = "chessboard"></table>
     <script>
         
-        let board = document.createElement("CANVAS");
-        board.id = "board";
+        let board = document.getElementById("chessboard");
         board.setAttribute("class", "chessboard");
-        let ctx = board.getContext("2d");
-        let boardIds = {};
         let chessPieces = [];
 
         function setBoard() {
@@ -96,35 +114,31 @@
 
         function createBoard () {
             let start = document.getElementById("start");
-            for (let y = 0; y <= 600; y += 7.5) {
-                for (let x = 0; x <= 550; x += 15) {
-                    (x/15) % 2 === 0 && (y/7.5) % 2 != 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
-                    (x/15) % 2 != 0 && (y/7.5) % 2 === 0 ? ctx.fillRect(x, y, 15, 7.5) : x = x;
-                }
-            }
-            document.body.insertBefore(board, start);
-            assignIds();
-        }
-
-        function assignIds() {
             let letterNum = 0;
             let number = 1;
-            let x = 2.5;
-            let y = 1.25;
             let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
-            for (let id = 0; id < 400; id ++) {
-                 boardIds[`${letters[letterNum]}${number}`] = {"x-val": null, "y-val": null};
-                 boardIds[`${letters[letterNum]}${number}`]["x-val"] = x;
-                 boardIds[`${letters[letterNum]}${number}`]["y-val"] = y;
-                 x += 15;
-                if (number === 20) {
-                    number = 0;
-                    x = 2.5;
-                    y += 7.5;
-                    letterNum ++;
+            for (let columnLength = 0; columnLength < 20; columnLength ++) {
+                let column = document.createElement("TR");
+                column.setAttribute("class", "packed");
+                for (let rowLength = 0; rowLength < 20; rowLength ++) {
+                    let row = document.createElement("TD");
+                    row.setAttribute("class", "packed");
+                    let tile = document.createElement("CANVAS");
+                    tile.id = `${letters[letterNum]}${number}`
+                    if (columnLength  % 2 === 0) {
+                        rowLength % 2 === 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
+                    } else {
+                        rowLength % 2 != 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
+                    }
+                    row.appendChild(tile);
+                    column.appendChild(row);
+                    number ++;
                 }
-                number ++;
+                board.appendChild(column);
+                number = 1;
+                letterNum ++;
             }
+            document.body.insertBefore(board, start);
         }
 
         function chooseColor() {
@@ -163,9 +177,9 @@
         }
 
         function moveTo(piece, square) {
-            let x = boardIds[square]["x-val"];
-            let y = boardIds[square]["y-val"];
-            ctx.drawImage(piece, x, y, 10, 5);
+            let tile = document.getElementById(`${square}`);
+            let ctx = tile.getContext("2d");
+            ctx.drawImage(piece, 7.5, 3.75, 275, 134.5);
         }
 
         function start() {
@@ -186,7 +200,6 @@
             ev.target.appendChild(document.getElementById(data));
         }
     </script>
-<body>
 
 <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
 <br>
