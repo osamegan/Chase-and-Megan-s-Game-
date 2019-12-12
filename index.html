@@ -110,6 +110,7 @@
         let board = document.getElementById("chessboard");
         board.setAttribute("class", "chessboard");
         let chessPieces = [];
+        let selected = {};
 
         function setBoard() {
             let start = document.createElement("BUTTON");
@@ -134,9 +135,23 @@
                     let row = document.createElement("TD");
                     row.setAttribute("class", "packed");
                     let tile = document.createElement("CANVAS");
-                    tile.setAttribute("class", "packed");
-                    tile.setAttribute("onclick", "select()");
                     tile.id = `${letters[letterNum]}${number}`
+                    tile.setAttribute("class", "packed");
+                    tile.addEventListener("click", (e) => {
+                        if (selected.piece) {
+                            moveTo(selected.piece, tile.id);
+                            selected.tile.setAttribute("style", "border: 1px solid black");
+                            let ctx = selected.tile.getContext("2d");
+                            ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
+                            delete selected.piece;
+                            delete selected.tile;
+                        } else {
+                            tile.setAttribute("style", "border: 1px solid blue");
+                            selected.tile ? selected.tile.setAttribute("style", "border: 1px solid black") : selected.tile = tile;
+                            selected.tile = tile;
+                            tile.piece ? selected.piece = tile.piece : tile.piece = null;
+                        }
+                    });
                     if (columnLength  % 2 === 0) {
                         rowLength % 2 === 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
                     } else {
@@ -176,6 +191,7 @@
                 let position = positions[pieces];
                 if (position) {
                     moveTo(chessPieces[pieces].image, position);
+                    chessPieces[pieces].currentPos = position;
                 }
             }
         }
@@ -192,6 +208,7 @@
             let tile = document.getElementById(`${square}`);
             let ctx = tile.getContext("2d");
             ctx.drawImage(piece, 7.5, 3.75, 275, 134.5);
+            tile.piece = piece;
         }
 
         function select() {
