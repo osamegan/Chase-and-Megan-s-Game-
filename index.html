@@ -56,6 +56,7 @@
         width: 600px;
         height: 600px;
         margin: auto;
+        border-collapse: collapse;
     }
 
     .whiteTile {
@@ -63,7 +64,8 @@
         width: 30px;
         height: 30px;
         background-color: white;
-        padding: 0%;
+        margin-top: 0px;
+        border-collapse: collapse;
     }
 
     .blackTile {
@@ -71,13 +73,14 @@
         width: 30px;
         height: 30px;
         background-color: black;
-        padding: 0%;
-        margin: 0%;
+        margin-top: 0px;
+        border-collapse: collapse;
     }
 
     .packed {
         padding: 0%;
         margin: 0%;
+        border-collapse: collapse;
     }
 
     </style>
@@ -92,15 +95,16 @@
     <img id = "blueKnight" src="Blue-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "pinkKnight" src="Pink-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "orangeKnight" src="Orange-Pacman.png" alt="" height = 0px width = 0px>
-    <img id = "redBishop" src="Scared Ghost-Red.png" alt="" height = 0px width = 0px>
+    <img id = "redBishop" src="Scared-Ghost-Red.png" alt="" height = 0px width = 0px>
     <img id = "blueBishop" src="Scared-Ghost-Blue.png" alt="" height = 0px width = 0px>
     <img id = "pinkBishop" src="Scared-Ghost-Pink.png" alt="" height = 0px width = 0px>
-    <img id = "orangeBishop" src=" Ghost-Orange.png" alt="" height = 0px width = 0px>
+    <img id = "orangeBishop" src="Scared-Ghost-Orange.png" alt="" height = 0px width = 0px>
     <img id = "redKing" src="Red-King.png" alt="" height = 0px width = 0px>
     <img id = "blueKing" src="Blue-King.png" alt="" height = 0px width = 0px>
     <img id = "pinkKing" src="Pink-King.png" alt="" height = 0px width = 0px>
     <img id = "orangeKing" src="Orange-King.png" alt="" height = 0px width = 0px>
 
+    <table id = "chessboard"></table>
     <script>
         
         let board = document.getElementById("chessboard");
@@ -130,6 +134,8 @@
                     let row = document.createElement("TD");
                     row.setAttribute("class", "packed");
                     let tile = document.createElement("CANVAS");
+                    tile.setAttribute("class", "packed");
+                    tile.setAttribute("onclick", "select()");
                     tile.id = `${letters[letterNum]}${number}`
                     if (columnLength  % 2 === 0) {
                         rowLength % 2 === 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
@@ -186,6 +192,10 @@
             let tile = document.getElementById(`${square}`);
             let ctx = tile.getContext("2d");
             ctx.drawImage(piece, 7.5, 3.75, 275, 134.5);
+        }
+
+        function select() {
+            
         }
 
         function start() {
