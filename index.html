@@ -96,13 +96,16 @@
         
         let board = document.getElementById("chessboard");
         board.setAttribute("class", "chessboard");
+        let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
         let chessPieces = [];
         let selected = {};
+        let turn = -28;
         const moves = {
             rook: {
                 vertical: true,
                 horizontal: true,
                 diagonal: false,
+                knight: false,
                 range: Infinity,                
                 leavable: true,
             },
@@ -111,6 +114,7 @@
                 vertical: false,
                 horizontal: false,
                 diagonal: true,
+                knight: false,
                 range: Infinity,
                 leavable: true,
             },
@@ -119,6 +123,7 @@
                 vertical: false,
                 horizontal: false,
                 diagonal: false,
+                knight: true,
                 range: undefined,
                 leavable: true,
             },
@@ -127,6 +132,7 @@
                 vertical: true,
                 horizontal: true,
                 diagonal: true,
+                knight: false,
                 range: 1,
                 leavable: false,
             }
@@ -147,7 +153,6 @@
             let start = document.getElementById("start");
             let letterNum = 0;
             let number = 1;
-            let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
             for (let columnLength = 0; columnLength < 20; columnLength ++) {
                 let column = document.createElement("TR");
                 column.setAttribute("class", "packed");
@@ -210,7 +215,10 @@
             for (let pieces in chessPieces) {
                 let position = positions[pieces];
                 if (position) {
-                    moveTo(chessPieces[pieces].image, position);
+                    let tile = document.getElementById(position)
+                    let ctx = tile.getContext("2d");
+                    ctx.drawImage(chessPieces[pieces].image, 7.5, 3.75, 275, 134.5);
+                    tile.piece = chessPieces[pieces];
                     chessPieces[pieces].currentPos = position;
                 }
             }
@@ -226,23 +234,39 @@
         }
 
         function moveTo(piece, square) {
-            let tile = document.getElementById(`${square}`);
+            let tile = document.getElementById(square);
             let ctx = tile.getContext("2d");
-            if (checkLegality(piece, square)) {
-                ctx.drawImage(piece, 7.5, 3.75, 275, 134.5);
+            if (checkLegality(piece, square) === 'legal') {
+                ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
                 tile.piece = piece;
+                piece.currentPos = square;
             }
+            turn ++;
         }
-
+// The letters and numbers of the id system need to be switched!!!
         function checkLegality(piece, square) {
             let startId = piece.currentPos;
             let endId = square;
             let moveType = null;
+            let slope = (letters.indexOf(startId[0]) + 1 - letters.indexOf(endId[0]) + 1) / (Number(startId[1]) - Number(endId[1]));
+            console.log(startId);
+            console.log(letters.indexOf(startId[0]));
+            console.log(slope);
+            console.log(letters.indexOf(startId[0]) + 1 - letters.indexOf(endId[0]) + 1);
+            console.log(Number(startId[1]) - Number(endId[1]));
             if (startId[0] === endId[0]) {
                 moveType = 'horizontal';
             } else if (startId[1] === endId[1]){
                 moveType = 'vertical';
-            } else if ()
+            } else if (Math.abs(slope) = 1) {
+                moveType = 'diagonal';
+            } else if (Math.abs(slope) === 2 || Math.abs(slope) === 0.5) {
+                moveType = 'knight';
+            } else {
+                moveType = 'invalid';
+            }
+            piece.movability[moveType] ? jurisdiction = 'legal' : jurisdiction = 'illegal';
+            return jurisdiction;
         }
 
         function start() {
