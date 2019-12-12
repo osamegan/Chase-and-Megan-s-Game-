@@ -5,23 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chase and Megan's Game</title>
-
-    <style>
-        #div1 {
-          width: 15px;
-          height: 7.5px;
-          padding: 10px;
-          border: 1px solid #aaaaaa;
-        }
-        #div2 {
-          width: 15px;
-          height: 7.5px;
-          padding: 10px;
-          border: 1px solid #aaaaaa;
-        }
-        
-    </style>
-
         <script>
             function allowDrop(ev) {
               ev.preventDefault();
@@ -233,13 +216,5 @@
             ev.target.appendChild(document.getElementById(data));
         }
     </script>
-
-<div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-<br>
-<img id="drag1" src="Orange-King.png" draggable="true" ondragstart="drag(event)" width="20" height="20">
-
-<div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-<br>
-<img id="drag2" src="Red-Pacman.png" draggable="true" ondragstart="drag(event)" width="20" height="20">
 </body>
 </html> 
