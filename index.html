@@ -201,6 +201,7 @@
             piece.image = new Image();
             piece.image.src = document.getElementById(`${color}${type}`).src;
             piece.id = `${color}${type}${number}`;
+            piece.movability = type.toLowerCase();
             chessPieces.push(piece);
         }
 
