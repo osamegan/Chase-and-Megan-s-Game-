@@ -5,22 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chase and Megan's Game</title>
-        <script>
-            function allowDrop(ev) {
-              ev.preventDefault();
-            }
-            
-            function drag(ev) {
-              ev.dataTransfer.setData("text", ev.target.id);
-            }
-            
-            function drop(ev) {
-              ev.preventDefault();
-              var data = ev.dataTransfer.getData("text");
-              ev.target.appendChild(document.getElementById(data));
-            }
-            </script>
-
 </head>
 <body onload = "setBoard()">
 
@@ -65,7 +49,7 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: red;
+        background-color: rgb(253, 103, 103);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -74,7 +58,7 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: blue;
+        background-color: rgb(93, 93, 255);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -83,7 +67,7 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: pink;
+        background-color: rgb(255, 224, 229);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -92,7 +76,7 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: orange;
+        background-color: rgb(255, 190, 70);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -128,6 +112,7 @@
     <img id = "orangeKing" src="Orange-King.png" alt="" height = 0px width = 0px>
 
     <table id = "chessboard"></table>
+
     <script>
         
         let board = document.getElementById("chessboard");
@@ -136,7 +121,35 @@
         let chessPieces = [];
         let selected = {};
         let crossedTiles = [];
-        let turn = -28;
+        crossedTiles.fill = function(tile, color) {
+            let allIds = crossedTiles.map(getId);
+            let theHalf = 0;
+            let ids = null;
+            allIds.indexOf(tile.id) > 2 ? theHalf = 2 : theHalf = 1;
+            theHalf === 1 ? ids = allIds.slice(0, 3) : ids = allIds.slice(3, 6);
+            fillTerritory({[color]: ids});
+        }
+        crossedTiles.unfill = function(tile) {
+            let theHalf = 0;
+            let ids = null;
+            crossedTiles.indexOf(tile) > 2 ? theHalf = 2 : theHalf = 1;
+            if (theHalf === 1) {
+                ids = crossedTiles.slice(1, 4);
+            } else {
+                let partOne = [crossedTiles[0]];
+                let partTwo = crossedTiles.slice(4, 6);
+                ids = partOne.concat(partTwo);
+            }
+            ids.forEach(originalColor);
+        }
+        crossedTiles.set = () => {
+            for (let tile of crossedTiles) {
+                tile.removeAttribute("onmouseover");
+                tile.removeAttribute("onmouseout");
+            }
+            empty(crossedTiles);
+        }
+        let turn = 1;
         const moves = {
             rook: {
                 vertical: true,
@@ -184,10 +197,11 @@
             document.body.appendChild(start);
             createBoard();
             chooseColor();
+            fillTerritory({red: ['A2', 'B1'], blue: ['A19', 'B20'], pink:  ['S1', 'T2'], orange: ['S20', 'T19']});
         }
 
-        function createBoard () {
-            let start = document.getElementById("start");
+        function createBoard() {
+            let start = document.getElementById('start');
             let letterNum = 0;
             let number = 1;
             for (let columnLength = 0; columnLength < 20; columnLength ++) {
@@ -200,16 +214,33 @@
                     tile.id = `${letters[letterNum]}${number}`
                     tile.setAttribute("class", "packed");
                     tile.addEventListener("click", (e) => {
-                        if (selected.piece && checkLegality(selected.piece, tile.id) === 'legal') {
+                        if (selected.piece && checkLegality(selected.piece, tile.id) === 'legal' && !(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
+                            if (tile.onmouseover) {
+                                return true;
+                            }
+                        })) && isTurnLegal(selected.piece.color)) {
                             moveTo(selected.piece, tile.id);
+                            if (!crossedTiles.some(function(tile) {
+                                let ans = null
+                                tile.currentColor ? ans = false : ans = true;
+                                return ans;
+                            })) {
+                                crossedTiles.forEach(setLastColor);
+                            }
+                            crossedTiles.forEach(setCurrentColor);
                             selected.tile.setAttribute("style", "border: 1px solid black");
                             let ctx = selected.tile.getContext("2d");
                             ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
                             delete selected.piece;
                             delete selected.tile.piece;
                             delete selected.tile;
-                        } else {
-                            tile.setAttribute("style", "border: 1px solid blue");
+                        } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
+                            if (tile.onmouseover) {
+                                return true;
+                            }
+                        }))) {
+                            empty(crossedTiles);
+                            tile.setAttribute("style", "border: 1px blue");
                             selected.tile ? selected.tile.setAttribute("style", "border: 1px solid black") : selected.tile = tile;
                             selected.tile = tile;
                             tile.piece ? selected.piece = tile.piece : tile.piece = null;
@@ -220,6 +251,7 @@
                     } else {
                         rowLength % 2 != 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
                     }
+                    tile.lastColor = tile.className.slice(0, tile.className.indexOf('T'));
                     row.appendChild(tile);
                     column.appendChild(row);
                     letterNum ++;
@@ -256,7 +288,9 @@
                     let tile = document.getElementById(position)
                     let ctx = tile.getContext("2d");
                     ctx.drawImage(chessPieces[pieces].image, 7.5, 3.75, 275, 134.5);
+                    tile.setAttribute("class", `${chessPieces[pieces].color}Tile`);
                     tile.piece = chessPieces[pieces];
+                    tile.lastColor = chessPieces[pieces].color;
                     chessPieces[pieces].currentPos = position;
                 }
             }
@@ -278,11 +312,16 @@
             let ctx = tile.getContext("2d");
             ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
             tile.setAttribute("class", `${piece.color}Tile`);
+            checkAdjacentTiles(tile);
             crossedTiles.forEach(color);
-            empty(crossedTiles);
             tile.piece = piece;
             piece.currentPos = square;
             turn ++;
+            if (piece.type === 'knight') {
+                userSelect(crossedTiles, piece.color);
+            } else {
+                empty(crossedTiles);
+            }
         }
 
         function checkLegality(piece, square) {
@@ -304,7 +343,7 @@
             } else {
                 moveType = 'invalid';
             }
-            if (tile.piece || (piece.type === 'king' && ranged === true) || !piece.movability[moveType]) {
+            if (tile.piece || (piece.type === 'king' && (ranged === true || tile.className.slice(0, tile.className.indexOf('T')) != piece.color)) || !piece.movability[moveType]) {
                 jurisdiction = 'illegal';
             } else {
                 jurisdiction = 'legal';
@@ -318,52 +357,55 @@
             let idNumber = Number(start.slice(1, 3));
             let endLetter = end[0];
             let endNumber = Number(end.slice(1, 3));
+            let round = 0;
             for (let tile = document.getElementById(start); tile.id != end; tile = document.getElementById(`${idLetter}${idNumber}`)) {
                 crossedTiles.push(tile);
-                //Knights are still broken!
                 if (moveType === 'knight') {
-                    let round = 1;
-                    if (slope === 2) {
-                        if (round < 3) {
-                            idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
-                        } else {
-                            endNumber > idNumber ? idNumber ++ : idNumber --;
-                        }
-                    } else if (slope === -2) {
-                        if (round === 1) {
-                            endNumber > idNumber ? idNumber ++ : idNumber --;
-                        } else {
-                            idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
-                        }
-                    } else if (slope === 0.5) {
-                        if (round < 3) {
-                            endNumber > idNumber ? idNumber ++ : idNumber --;
-                        } else {
-                            idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
-                        }
-                    } else {
-                        if (round === 1) {
-                            endNumber > idNumber ? idNumber ++ : idNumber --;
-                        } else {
-                            idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
-                        }
-                    }
                     round ++;
-                } else {
-                    moveType === 'horizontal' ? idLetter = idLetter : endLetter > idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
-                    moveType === 'vertical' ? idNumber = idNumber : endNumber > idNumber ? idNumber ++ : idNumber --;
-                    console.log(idLetter);
+                    Math.abs(slope) > 1 ? round < 3 ? moveType = 'vertical' : moveType = 'horizontal' : round < 3 ? moveType = 'horizontal' : moveType = 'vertical';
+                }
+                moveType === 'horizontal' ? idLetter = idLetter : endLetter > idLetter ? idLetter = letters[letters.indexOf(idLetter) + 1] : idLetter = letters[letters.indexOf(idLetter) - 1];
+                moveType === 'vertical' ? idNumber = idNumber : endNumber > idNumber ? idNumber ++ : idNumber --;
+                round === 0 ? moveType = moveType : moveType = 'knight';
+                if (round === 3) {
+                    if (end === start) {
+                        return;
+                    }
+                    end = start;
+                    endLetter = end[0];
+                    endNumber = Number(end.slice(1, 3));
+                    round = 0;
                 }
             }
         }
 
-        function userSelect() {
+        function fillTerritory(obj) {
+            let colors = Object.keys(obj);
+            for (let color of colors) {
+                let ids = obj[color];
+                for (let id of ids) {
+                    let tile = document.getElementById(id);
+                    tile.setAttribute('class', `${color}Tile`);
+                    if (turn === 1) {
+                        tile.lastColor = color;
+                    }
+                }
+            }
+        }
 
+        function userSelect(crossedTiles, color) {
+            for (let tile of crossedTiles) {
+                if (crossedTiles.indexOf(tile) != 3) {
+                    tile.setAttribute("onmouseover", "crossedTiles.fill(this, this.currentColor)");
+                    tile.setAttribute("onmouseout","crossedTiles.unfill(this)");
+                    tile.setAttribute("onclick", "crossedTiles.set()");
+                }
+            }
         }
 
         function empty(array) {
             while (array.length > 0) {
-                array.pop();
+                array.shift();
             }
         }
 
@@ -371,23 +413,54 @@
             tile.setAttribute("class", `${selected.piece.color}Tile`);
         }
 
+        function originalColor(tile) {
+            tile.setAttribute('class', `${tile.lastColor}Tile`);
+        }
+
+        function getId(canvas) {
+            return canvas.id;
+        }
+
+        function setCurrentColor(item) {
+            item.currentColor = selected.piece.color;
+        }
+
+        function setLastColor(item) {
+            item.lastColor = item.currentColor;
+        }
+
+        function isTurnLegal(color) {
+            rightfulColor = null;
+            turn % 4 === 2 ? rightfulColor = 'blue' : turn % 4 === 3 ? rightfulColor = 'pink' : turn % 4 === 0 ? rightfulColor = 'orange' : rightfulColor = 'red'; 
+            if (rightfulColor === color) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkAdjacentTiles(tile) {
+            let trueCount = 0;
+            let tileNum = tile.id.slice(1, 3);
+            let square1 = document.getElementById(`${tile.id[0]}${tileNum + 1}`);
+            let square2 = document.getElementById(`${tile.id[0]}${tileNum - 1}`);
+            let square3 = document.getElementById(`${letters[letters.indexOf(tile.id[0]) + 1]}${tileNum}`);
+            let square4 = document.getElementById(`${letters[letters.indexOf(tile.id[0]) - 1]}${tileNum}`);
+            let squares = [square1, square2, square3, square4];
+            for (let square of squares) {
+                if (square && square.currentColor === tile.currentColor) {
+                    trueCount ++;
+                }
+            }
+            if (trueCount > 1) {
+                //Push all tiles surrounded by the color into the crossedTiles array
+            }
+        }
+
         function start() {
             
         }
-       
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
-
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
-        }
     </script>
 </body>
 </html> 
