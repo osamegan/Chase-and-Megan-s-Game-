@@ -18,7 +18,7 @@
         color: white;
         width:fit-content;
     }
-
+//
     .chessboard {
         width: 600px;
         height: 600px;
@@ -26,7 +26,7 @@
         border-collapse: collapse;
         border-spacing: 0px;
     }
-
+ /* chessboard coordanites */
     .whiteTile {
         border: 1px solid black;
         width: 30px;
@@ -35,7 +35,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/* White tile coordinates */
     .blackTile {
         border: 1px solid black;
         width: 30px;
@@ -44,7 +44,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/* Black tile coordinates */
     .redTile {
         border: 1px solid black;
         width: 30px;
@@ -53,7 +53,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/* red tile coordanites and coloring */
     .blueTile {
         border: 1px solid black;
         width: 30px;
@@ -62,7 +62,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/*  blue tile coordanites and coloring */
     .pinkTile {
         border: 1px solid black;
         width: 30px;
@@ -71,7 +71,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/*  pink tile coordanites and coloring */
     .orangeTile {
         border: 1px solid black;
         width: 30px;
@@ -80,7 +80,7 @@
         margin: 0px;
         border-collapse: collapse;
     }
-
+/*  orange tile coordanites and coloring */
     .packed {
         padding: 0;
         margin: 0;
@@ -110,7 +110,7 @@
     <img id = "blueKing" src="Blue-King.png" alt="" height = 0px width = 0px>
     <img id = "pinkKing" src="Pink-King.png" alt="" height = 0px width = 0px>
     <img id = "orangeKing" src="Orange-King.png" alt="" height = 0px width = 0px>
-
+<!-- names pictures -->
     <table id = "chessboard"></table>
 
     <script>
@@ -129,6 +129,7 @@
             theHalf === 1 ? ids = allIds.slice(0, 3) : ids = allIds.slice(3, 6);
             fillTerritory({[color]: ids});
         }
+        // assigns each tile a letter and number
         crossedTiles.unfill = function(tile) {
             let theHalf = 0;
             let ids = null;
@@ -186,6 +187,7 @@
                 range: 1,
                 leavable: false,
             }
+            //gives each piece their possible moves
         };
 
         function setBoard() {
@@ -199,7 +201,7 @@
             chooseColor();
             fillTerritory({red: ['A2', 'B1'], blue: ['A19', 'B20'], pink:  ['S1', 'T2'], orange: ['S20', 'T19']});
         }
-
+// sets the board
         function createBoard() {
             let start = document.getElementById('start');
             let letterNum = 0;
@@ -270,7 +272,7 @@
             let color4 = "orange";
             setPieces([color1, color2, color3, color4]);
         }
-
+// names each color
         function setPieces(colors) {
             for (let color of colors) {
                 createPiece('Rook', color, 1);
@@ -295,7 +297,7 @@
                 }
             }
         }
-
+// gives the pieces' positions
         function createPiece(type, color, number) {
             let piece = {};
             piece.image = new Image();
@@ -306,7 +308,7 @@
             piece.movability = moves[piece.type];
             chessPieces.push(piece);
         }
-
+// creates the pieces
         function moveTo(piece, square) {
             let tile = document.getElementById(square);
             let ctx = tile.getContext("2d");
@@ -323,7 +325,7 @@
                 empty(crossedTiles);
             }
         }
-
+// makes the pieces move
         function checkLegality(piece, square) {
             let tile = document.getElementById(square);
             let startNumber = piece.currentPos.slice(1, 3);
@@ -351,7 +353,7 @@
             }
             return jurisdiction;
         }
-
+// checks the legality of the moves
         function logCrossedTiles(moveType, start, end, slope) {
             let idLetter = start[0];
             let idNumber = Number(start.slice(1, 3));
@@ -392,7 +394,7 @@
                 }
             }
         }
-
+// fills where the lines are drawn
         function userSelect(crossedTiles, color) {
             for (let tile of crossedTiles) {
                 if (crossedTiles.indexOf(tile) != 3) {
@@ -402,33 +404,33 @@
                 }
             }
         }
-
+// lets the player click on the tiles
         function empty(array) {
             while (array.length > 0) {
                 array.shift();
             }
         }
-
+// empties the array
         function color(tile) {
             tile.setAttribute("class", `${selected.piece.color}Tile`);
         }
-
+// colors the tile
         function originalColor(tile) {
             tile.setAttribute('class', `${tile.lastColor}Tile`);
         }
-
+// gives the tile its original color
         function getId(canvas) {
             return canvas.id;
         }
-
+// gets the canvas id
         function setCurrentColor(item) {
             item.currentColor = selected.piece.color;
         }
-
+// gives the original color
         function setLastColor(item) {
             item.lastColor = item.currentColor;
         }
-
+// sets the item's last color
         function isTurnLegal(color) {
             rightfulColor = null;
             turn % 4 === 2 ? rightfulColor = 'blue' : turn % 4 === 3 ? rightfulColor = 'pink' : turn % 4 === 0 ? rightfulColor = 'orange' : rightfulColor = 'red'; 
@@ -438,7 +440,7 @@
                 return false;
             }
         }
-
+// checks if the person can go
         function checkAdjacentTiles(tile) {
             let trueCount = 0;
             let tileNum = tile.id.slice(1, 3);
@@ -458,7 +460,7 @@
         }
 
         function start() {
-            
+            // makes everything work
         }
 
     </script>
