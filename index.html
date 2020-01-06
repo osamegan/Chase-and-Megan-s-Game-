@@ -221,9 +221,7 @@
                         })) && isTurnLegal(selected.piece.color)) {
                             moveTo(selected.piece, tile.id);
                             if (!crossedTiles.some(function(tile) {
-                                let ans = null
-                                tile.currentColor ? ans = false : ans = true;
-                                return ans;
+                                return tile.currentColor ? false : true;
                             })) {
                                 crossedTiles.forEach(setLastColor);
                             }
@@ -312,7 +310,10 @@
             let ctx = tile.getContext("2d");
             ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
             tile.setAttribute("class", `${piece.color}Tile`);
-            checkAdjacentTiles(tile);
+            crossedTiles.forEach(color);
+            if (touches(tile, `${tile.className}`, 2)) {
+                findEnclosedTiles(tile);
+            }
             crossedTiles.forEach(color);
             tile.piece = piece;
             piece.currentPos = square;
@@ -430,6 +431,7 @@
         }
 
         function isTurnLegal(color) {
+            return true; //THIS IS TEMPORARY!!!
             rightfulColor = null;
             turn % 4 === 2 ? rightfulColor = 'blue' : turn % 4 === 3 ? rightfulColor = 'pink' : turn % 4 === 0 ? rightfulColor = 'orange' : rightfulColor = 'red'; 
             if (rightfulColor === color) {
@@ -439,22 +441,109 @@
             }
         }
 
-        function checkAdjacentTiles(tile) {
-            let trueCount = 0;
-            let tileNum = tile.id.slice(1, 3);
-            let square1 = document.getElementById(`${tile.id[0]}${tileNum + 1}`);
-            let square2 = document.getElementById(`${tile.id[0]}${tileNum - 1}`);
-            let square3 = document.getElementById(`${letters[letters.indexOf(tile.id[0]) + 1]}${tileNum}`);
-            let square4 = document.getElementById(`${letters[letters.indexOf(tile.id[0]) - 1]}${tileNum}`);
-            let squares = [square1, square2, square3, square4];
-            for (let square of squares) {
-                if (square && square.currentColor === tile.currentColor) {
-                    trueCount ++;
+        function findEnclosedTiles(tile) {
+            let coloredTiles = Array.from(document.getElementsByClassName(`${tile.className}`)).map((tile) => {
+                return tile.id;
+            });
+            for (let tiles of coloredTiles) {
+                let square = document.getElementById(tiles);
+                if (square.hasAttribute("style", "background-color: purple;")) {
+                    square.removeAttribute("style", "background-color: purple;");
                 }
             }
-            if (trueCount > 1) {
-                //Push all tiles surrounded by the color into the crossedTiles array
+            let topmostTiles = ((((coloredTiles.sort()).reverse()).filter(noRepeatingNumbers)).map(backToElements)).sort(leftToRight);
+            let bottommostTiles = (((coloredTiles.sort()).filter(noRepeatingNumbers)).map(backToElements)).sort(leftToRight);
+            let rightmostTiles = (((coloredTiles.sort(function (a, b) {
+                return Number(a.slice(1, 3)) - Number(b.slice(1, 3));
+            })).filter(noRepeatingLetters)).map(backToElements)).sort(topToBottom);
+            let leftmostTiles = (((coloredTiles.sort(function (a, b) {
+                return Number(b.slice(1, 3)) - Number(a.slice(1, 3));
+            })).filter(noRepeatingLetters)).map(backToElements)).sort(topToBottom);
+            let nonpolygon = Array.from(document.getElementsByTagName('CANVAS')).filter((square) => {
+                return square.className != tile.className
+            });
+            let innerArea = nonpolygon.filter((square) => {
+                if (topmostTiles.find((correspondingTile) => {
+                    return Number(correspondingTile.id.slice(1, 3)) === Number(square.id.slice(1, 3));
+                }) && bottommostTiles.find((correspondingTile) => {
+                    return Number(correspondingTile.id.slice(1, 3)) === Number(square.id.slice(1, 3));
+                }) && leftmostTiles.find((correspondingTile) => {
+                    return correspondingTile.id[0] === square.id[0];
+                }) && rightmostTiles.find((correspondingTile) => {
+                    return correspondingTile.id[0] === square.id[0];
+                })) {
+                    if (letters.indexOf(square.id[0]) > letters.indexOf((topmostTiles.find((correspondingTile) => {
+                        return Number(correspondingTile.id.slice(1, 3)) === Number(square.id.slice(1, 3));
+                    })).id[0]) && letters.indexOf(square.id[0]) < letters.indexOf((bottommostTiles.find((correspondingTile) => {
+                        return Number(correspondingTile.id.slice(1, 3)) === Number(square.id.slice(1, 3));
+                    })).id[0]) && Number(square.id.slice(1, 3)) > Number((leftmostTiles.find((correspondingTile) => {
+                        return correspondingTile.id[0] === square.id[0];
+                    })).id.slice(1, 3)) && Number(square.id.slice(1, 3)) < Number((rightmostTiles.find((correspondingTile) => {
+                        return correspondingTile.id[0] === square.id[0];
+                    })).id.slice(1, 3))) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            });
+            for (let tile of innerArea) {
+                crossedTiles.unshift(tile);
+            };
+        }
+
+        function noRepeatingNumbers(tile, index, array) {
+            return (array.slice(index + 1)).find((newTile) => {
+                return Number(newTile.slice(1, 3)) === Number(tile.slice(1, 3));
+            }) ? false : true;
+        }
+
+        function noRepeatingLetters(tile, index, array) {
+            return (array.slice(index + 1)).find((newTile) => {
+                return newTile[0] === tile[0];
+            }) ? false : true;
+        }
+
+        function backToElements(tile) {
+            return document.getElementById(tile);
+        }
+
+        function touches(tile, tileType, direction) {
+            let tileLetter = letters[letters.indexOf(tile.id[0])];
+            let tileNumber = Number(tile.id.slice(1, 3));
+            let touchingTiles = {
+                'aboveTile' : document.getElementById(`${letters[letters.indexOf(tileLetter) - 1]}${tileNumber}`), 
+                'belowTile' : document.getElementById(`${letters[letters.indexOf(tileLetter) + 1]}${tileNumber}`),
+                'leftTile' : document.getElementById(`${tileLetter}${tileNumber - 1}`),
+                'rightTile' : document.getElementById(`${tileLetter}${tileNumber + 1}`)
+            };
+            if (isNaN(Number(direction))) {
+                if (!tileType.includes('non')) {
+                    return (touchingTiles[direction]).className === tileType ? true : false;
+                } else {
+                    return (touchingTiles[direction]).className != tileType.slice(3) ? true : false;
+                }
+            } else {
+                let trueCount = 0;
+                for (let tiles of Object.values(touchingTiles)) {
+                    if (!tileType.includes('non') && tiles) {
+                        tiles.className === tileType ? trueCount ++ : trueCount += 0;
+                    } else if (tiles) {
+                        tiles.className != tileType.slice(3) ? trueCount ++ : trueCount += 0;
+                    }
+                }
+                return trueCount === direction ? true : false;
             }
+        }
+
+        function topToBottom(a, b) {
+            return a.id[0] > b.id[0] ? 1 : -1;
+        }
+
+        function leftToRight(a, b) {
+            return Number(a.id.slice(1,3)) - Number(b.id.slice(1, 3));
         }
 
         function start() {
