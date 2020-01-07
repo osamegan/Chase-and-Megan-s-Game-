@@ -520,6 +520,16 @@
                     broken = false;
                 }
             }
+            if (innerArea.some((square) => {
+                return square.piece ? true : false;
+            })) {
+                let square = innerArea.find((square) => {
+                    return square.piece ? true : false;
+                });
+                let ctx = square.getContext("2d");
+                ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
+                delete square.piece;
+            }
         }
 
         function noRepeatingNumbers(tile, index, array) {
