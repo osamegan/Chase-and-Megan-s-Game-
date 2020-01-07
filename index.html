@@ -220,7 +220,7 @@
                             if (tile.onmouseover) {
                                 return true;
                             }
-                        })) && isTurnLegal(selected.piece.color)) {
+                        })) && isTurnLegal(selected.piece.color) && selected.tile.id === selected.piece.currentPos) {
                             moveTo(selected.piece, tile.id);
                             if (!crossedTiles.some(function(tile) {
                                 return tile.currentColor ? false : true;
@@ -349,6 +349,11 @@
             } else {
                 jurisdiction = 'legal';
                 logCrossedTiles(moveType, piece.currentPos, square, slope);
+                if (crossedTiles.some((tile) => {
+                    return tile.piece ? true : false;
+                }) && piece.type != 'knight') {
+                    jurisdiction = 'illegal';
+                }
             }
             return jurisdiction;
         }
@@ -377,6 +382,9 @@
                     endNumber = Number(end.slice(1, 3));
                     round = 0;
                 }
+            }
+            if (moveType != 'knight') {
+                crossedTiles.shift();
             }
         }
 
