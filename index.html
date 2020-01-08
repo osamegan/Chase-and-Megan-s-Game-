@@ -325,6 +325,7 @@
             let ctx = tile.getContext("2d");
             ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
             tile.setAttribute("class", `${piece.color}Tile`);
+            tile.lastColor = selected.piece.color;
             if (piece.type != 'knight') {
                 crossedTiles.forEach(color);
                 findEnclosedTiles(tile);
@@ -549,7 +550,7 @@
                     broken = false;
                 }
             }
-            if (innerArea.some((square) => {
+            while (innerArea.some((square) => {
                 return square.piece ? true : false;
             })) {
                 let square = innerArea.find((square) => {
