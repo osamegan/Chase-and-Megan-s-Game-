@@ -109,7 +109,7 @@
     <img id = "blueKing" src="Blue-King.png" alt="" height = 0px width = 0px>
     <img id = "pinkKing" src="Pink-King.png" alt="" height = 0px width = 0px>
     <img id = "orangeKing" src="Orange-King.png" alt="" height = 0px width = 0px>
-    <img id = "questionMark" src = "Question Mark.png" alt="" height = px width>
+    <img id = "questionMark" src = "Question Mark.png" alt="" height = 0px width = 0px>
 <!-- names pictures -->
     <table id = "chessboard"></table>
 
@@ -128,12 +128,20 @@
             let ids = null;
             allIds.indexOf(tile.id) > 2 ? theHalf = 2 : theHalf = 1;
             if (theHalf === 1) {
-                ids = allIds.slice(0, 3)
+                ids = allIds.slice(1, 3)
                 crossedTiles.unfill(document.getElementById(allIds[3]));
             } else {
                 ids = allIds.slice(3, 6);
+                ids.push(allIds[0]);
                 crossedTiles.unfill(document.getElementById(allIds[1]));
             }
+            ids.forEach((square, index) => {
+                let ctx = document.getElementById(square).getContext("2d");
+                let questionMark = document.getElementById('questionMark');
+                if (((index != 3 && theHalf === 1) || (theHalf === 2 && index != 0)) && !document.getElementById(square).piece) {
+                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                }
+            })
             fillTerritory({[color]: ids});
         }
         // assigns each tile a letter and number
@@ -142,18 +150,21 @@
             let ids = null;
             crossedTiles.indexOf(tile) > 2 ? theHalf = 2 : theHalf = 1;
             if (theHalf === 1) {
-                ids = crossedTiles.slice(1, 3);
+                ids = crossedTiles.slice(0, 3);
             } else {
                 ids = crossedTiles.slice(4, 6);
             }
             ids.forEach(originalColor);
         }
         crossedTiles.set = (tile) => {
+            crossedTiles.splice(3, 1);
             for (let square of crossedTiles) {
                 square.removeAttribute("onmouseover");
-                if (square.piece && square.piece.color != tile.className.slice(0, tile.className.indexOf('T'))) {
-                    let ctx = square.getContext("2d");
+                let ctx = square.getContext("2d");
+                if (!square.piece || (square.piece && (square.currentColor === square.piece.color) && square.piece.color != tile.className.slice(0, tile.className.indexOf('T')))) {
                     ctx.clearRect(0, 0, 300, 150);
+                }
+                if (square.piece && square.piece.color != tile.className.slice(0, tile.className.indexOf('T'))) {
                     delete square.piece;
                 }
             }
@@ -161,6 +172,7 @@
             findEnclosedTiles(tile);
             crossedTiles.forEach((square) => {
                 square.setAttribute("class", `${tile.className}`);
+                square.lastColor = tile.className.slice(0, tile.className.indexOf('T'));
             });
             empty(crossedTiles);
         }
@@ -245,6 +257,9 @@
                             selected.tile.setAttribute("style", "border: 1px solid black");
                             let ctx = selected.tile.getContext("2d");
                             ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
+                            if (selected.piece.type === 'knight') {
+                                ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                            }
                             delete selected.piece;
                             delete selected.tile.piece;
                             delete selected.tile;
@@ -430,11 +445,11 @@
 
         function userSelect() {
             for (let tile in crossedTiles) {
-                if (Number(tile) != 3 && Number(tile) < 6) {
-                    crossedTiles[tile].setAttribute("onmouseover", "crossedTiles.fill(this, this.currentColor)");
-                }
-                if (Number(tile) < crossedTiles.length - 1) {
+                if (Number(tile) < 6) {
                     crossedTiles[tile].setAttribute("onclick", "crossedTiles.set(this)");
+                    if (Number(tile) != 3) {
+                        crossedTiles[tile].setAttribute("onmouseover", "crossedTiles.fill(this, this.currentColor)");
+                    }
                 }
             }
         }
@@ -449,11 +464,21 @@
             tile.setAttribute("class", `${selected.piece.color}Tile`);
             if (selected.piece.type != 'knight')  {
                 tile.lastColor = selected.piece.color;
+            } else {
+                let questionMark = document.getElementById('questionMark');
+                let ctx = tile.getContext("2d");
+                if (crossedTiles.indexOf(tile) != 3 && !tile.piece) {
+                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                }
             }
         }
 // colors the tile
         function originalColor(tile) {
             tile.setAttribute('class', `${tile.lastColor}Tile`);
+            let ctx = tile.getContext("2d");
+            if (!tile.piece) {
+                ctx.clearRect(0, 0, 300, 150);
+            }
         }
 // gives the tile its original color
         function getId(canvas) {
