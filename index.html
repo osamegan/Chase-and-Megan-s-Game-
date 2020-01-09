@@ -89,8 +89,50 @@
         display: inline-block;
     }
 
-    </style>
+    div {
+        margin: 0% 44.5%;
+        width: 150px;
+        text-align: center;
+        position: relative;
+    }
 
+    div:hover {
+        color: blueviolet;
+    }
+
+    div:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .tooltip {
+        position: absolute;
+        color: black;
+        background-color: rgba(255, 251, 0, 0.5);
+        font-size: 12px;
+        padding: 5px 0px;
+        z-index: 1;
+        visibility: hidden;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        width: 100px;
+        bottom: 200%;
+        left: 17.5%;
+        opacity: 0;
+        transition: opacity 0.7s;
+    }
+
+    .moveLog {
+        visibility: hidden;
+        margin: 0px 0px 0px 10px;
+        background-color: lightgray;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        position: fixed;
+        width: 200px;
+        text-align: center;
+    }
+
+    </style>
+    <pre class = 'moveLog' id = 'movementLog'></pre>
     <h1 style="text-align: center;">Chess.io</h1>
 
     <img id = "redRook" src="Red-Ghost-Left.png" alt="" height = 0px width = 0px>
@@ -111,6 +153,12 @@
     <img id = "orangeKing" src="Orange-King.png" alt="" height = 0px width = 0px>
     <img id = "questionMark" src = "Question Mark.png" alt="" height = 0px width = 0px>
 <!-- names pictures -->
+
+    <div id = 'turns' style = "color: red">Red Player's Turn!</div>
+    <div onclick = makeVisible()>
+        <span id = 'turnCount'>Turns Taken: 0</span>
+        <span id = 'tooltip' class = 'tooltip'>See Recent Moves</span>
+    </div>
     <table id = "chessboard"></table>
 
     <script>
@@ -122,6 +170,8 @@
         let selected = {};
         let crossedTiles = [];
         let innerArea = [];
+        let movements = [];
+        let log = '';
         crossedTiles.fill = function(tile, color) {
             let allIds = crossedTiles.map(getId);
             let theHalf = 0;
@@ -157,16 +207,20 @@
             ids.forEach(originalColor);
         }
         crossedTiles.set = (tile) => {
-            crossedTiles.splice(3, 1);
             for (let square of crossedTiles) {
                 square.removeAttribute("onmouseover");
+                square.removeAttribute("onclick");
+                square.lastColor = square.className.slice(0, square.className.indexOf('T'));
                 let ctx = square.getContext("2d");
-                if (!square.piece || (square.piece && (square.currentColor === square.piece.color) && square.piece.color != tile.className.slice(0, tile.className.indexOf('T')))) {
+                if (!square.piece || (square.piece && (square.piece.currentColor != square.piece.color && square.className === tile.className) && square.piece.color != tile.className.slice(0, tile.className.indexOf('T')))) {
                     ctx.clearRect(0, 0, 300, 150);
                 }
-                if (square.piece && square.piece.color != tile.className.slice(0, tile.className.indexOf('T'))) {
+                if (square.piece && (square.piece.currentColor != square.piece.color && square.className === tile.className) && square.piece.color != tile.className.slice(0, tile.className.indexOf('T'))) {
                     delete square.piece;
                 }
+            }
+            if (turnToggle === "off") {
+                turnProgress('knight', tile);
             }
             empty(crossedTiles);
             findEnclosedTiles(tile);
@@ -177,6 +231,7 @@
             empty(crossedTiles);
         }
         let turn = 1;
+        let turnToggle = 'off';
         const moves = {
             rook: {
                 vertical: true,
@@ -217,6 +272,12 @@
         };
 
         function setBoard() {
+            let toggleButton = document.createElement("BUTTON");
+            toggleButton.setAttribute("onclick", "toggleTurns()");
+            toggleButton.innerHTML = "Turns: On";
+            toggleButton.id = 'toggle';
+            toggleButton.setAttribute("style", "margin: 0.5% 46.25%; width: 100px; color: green; font-weight: bold");
+            document.body.appendChild(toggleButton);
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
             start.id = "start";
@@ -253,7 +314,7 @@
                             })) {
                                 crossedTiles.forEach(setLastColor);
                             }
-                            crossedTiles.forEach(setCurrentColor);
+                            selected.piece.type === 'knight' ? crossedTiles.slice(0, 4).forEach(setCurrentColor) : crossedTiles.forEach(setCurrentColor);
                             selected.tile.setAttribute("style", "border: 1px solid black");
                             let ctx = selected.tile.getContext("2d");
                             ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
@@ -349,7 +410,9 @@
             }
             tile.piece = piece;
             piece.currentPos = square;
-            turn ++;
+            if (turnToggle === "off" && piece.type != 'knight') {
+                turnProgress(piece, tile);
+            }
             if (piece.type === 'knight') {
                 (crossedTiles.filter((tile, index) => {
                     return index < 4;
@@ -436,7 +499,7 @@
                 for (let id of ids) {
                     let tile = document.getElementById(id);
                     tile.setAttribute('class', `${color}Tile`);
-                    if (turn === 1) {
+                    if (turn === 1 && crossedTiles.length != 6) {
                         tile.lastColor = color;
                     }
                 }
@@ -447,8 +510,10 @@
             for (let tile in crossedTiles) {
                 if (Number(tile) < 6) {
                     crossedTiles[tile].setAttribute("onclick", "crossedTiles.set(this)");
-                    if (Number(tile) != 3) {
+                    if (Number(tile) < 3) {
                         crossedTiles[tile].setAttribute("onmouseover", "crossedTiles.fill(this, this.currentColor)");
+                    } else {
+                        crossedTiles[tile].setAttribute("onmouseover", "crossedTiles.fill(this, crossedTiles[0].currentColor)");
                     }
                 }
             }
@@ -494,8 +559,10 @@
         }
 // sets the item's last color
         function isTurnLegal(color) {
-            return true; //THIS IS TEMPORARY!!!
-            rightfulColor = null;
+            if (turnToggle === 'on') {
+                return true; //THIS IS TEMPORARY!!!
+            }
+            let rightfulColor = null;
             turn % 4 === 2 ? rightfulColor = 'blue' : turn % 4 === 3 ? rightfulColor = 'pink' : turn % 4 === 0 ? rightfulColor = 'orange' : rightfulColor = 'red'; 
             if (rightfulColor === color) {
                 return true;
@@ -644,6 +711,67 @@
 
         function leftToRight(a, b) {
             return Number(a.id.slice(1,3)) - Number(b.id.slice(1, 3));
+        }
+
+        let turnFrozen;
+
+        function toggleTurns() {
+            let toggleButton = document.getElementById('toggle');
+            turnToggle === 'on' ? turnToggle = 'off' : turnToggle = 'on';
+            if (turnToggle === 'on') {
+                turnFrozen = turnCount;
+                toggleButton.innerHTML = "Turns: Off"
+                toggleButton.setAttribute('style', 'margin: 0.5% 46.25%; width: 100px; color: red; font-weight: bold');
+            } else {
+                turnCount = turnFrozen;
+                toggleButton.innerHTML = "Turns: On"
+                toggleButton.setAttribute('style', 'margin: 0.5% 46.25%; width: 100px; color: green; font-weight: bold');
+            }
+        }
+
+        function logMove() {
+            let movementLog = document.getElementById('movementLog');
+            log = '';
+            for (let move of movements) {
+                log += `${move}\n`;
+            }
+            if (visibilityToggle === 'off') {
+                movementLog.innerHTML = log;
+            }
+        }
+
+        let visibilityToggle = 'on'
+
+        function makeVisible() {
+            let movementLog = document.getElementById('movementLog');
+            visibilityToggle === 'on' ? visibilityToggle = 'off' : visibilityToggle = 'on';
+            if (visibilityToggle === 'off') {
+                movementLog.setAttribute("style", "visibility: visible")
+                log != '' ? movementLog.innerHTML = log : movementLog.innerHTML = 'No Moves to Report!';
+             } else {
+                movementLog.setAttribute("style", "visibility: hidden");
+                movementLog.innerHTML = '';
+             }
+        }
+
+        function turnProgress(piece, tile) {
+            turn ++;
+            let turnCounter = document.getElementById("turnCount");
+            turnCounter.innerHTML = `Turns Taken: ${turn - 1}`;
+            let player = document.getElementById('turns');
+            let rightfulColor = null;
+            turn % 4 === 2 ? rightfulColor = 'Blue' : turn % 4 === 3 ? rightfulColor = 'Pink' : turn % 4 === 0 ? rightfulColor = 'Orange' : rightfulColor = 'Red'; 
+            player.childNodes[0].nodeValue = `${rightfulColor} Player's Turn!`;
+            player.setAttribute("style", `color: ${rightfulColor.toLowerCase()}`);
+            if (piece != 'knight') {
+                movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}`);
+            } else {
+                movements.push(`${tile.className[0].toUpperCase()}${tile.className.slice(1, tile.className.indexOf('T'))} knight: ${crossedTiles[0].id} to ${tile.id}`);
+            }
+            if (movements.length > 32) {
+                movements.shift();
+            }
+            logMove();
         }
 
         function start() {
