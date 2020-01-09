@@ -90,7 +90,7 @@
     }
 
     div {
-        margin: 0% 44.5%;
+        margin: 0% 46.25%;
         width: 150px;
         text-align: center;
         position: relative;
@@ -276,7 +276,7 @@
             toggleButton.setAttribute("onclick", "toggleTurns()");
             toggleButton.innerHTML = "Turns: On";
             toggleButton.id = 'toggle';
-            toggleButton.setAttribute("style", "margin: 0.5% 46.25%; width: 100px; color: green; font-weight: bold");
+            toggleButton.setAttribute("style", "margin: 0.5% 47.5%; width: 100px; color: green; font-weight: bold");
             document.body.appendChild(toggleButton);
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
@@ -721,11 +721,11 @@
             if (turnToggle === 'on') {
                 turnFrozen = turnCount;
                 toggleButton.innerHTML = "Turns: Off"
-                toggleButton.setAttribute('style', 'margin: 0.5% 46.25%; width: 100px; color: red; font-weight: bold');
+                toggleButton.setAttribute('style', 'margin: 0.5% 47.5%; width: 100px; color: red; font-weight: bold');
             } else {
                 turnCount = turnFrozen;
                 toggleButton.innerHTML = "Turns: On"
-                toggleButton.setAttribute('style', 'margin: 0.5% 46.25%; width: 100px; color: green; font-weight: bold');
+                toggleButton.setAttribute("style", "margin: 0.5% 47.5%; width: 100px; color: green; font-weight: bold");
             }
         }
 
