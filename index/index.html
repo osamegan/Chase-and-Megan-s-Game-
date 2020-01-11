@@ -12,8 +12,8 @@
     
     .start {
         background-color: green;
-        margin: 0% 48%;
-        margin-top: 50px;
+        margin-left: 48%;
+        margin-bottom: 10px;
         padding: 5px;
         color: white;
         width:fit-content;
@@ -114,9 +114,9 @@
         z-index: 1;
         visibility: hidden;
         font-family: Georgia, 'Times New Roman', Times, serif;
-        width: 100px;
+        width: 200px;
         bottom: 200%;
-        left: 17.5%;
+        left: -20%;
         opacity: 0;
         transition: opacity 0.7s;
     }
@@ -133,7 +133,7 @@
 
     </style>
     <pre class = 'moveLog' id = 'movementLog'></pre>
-    <h1 style="text-align: center;">Chess.io</h1>
+    <h1 style="text-align: center;">Chess.io Photoshoot Playground</h1>
 
     <img id = "redRook" src="images/Red-Ghost-Left.png" alt="" height = 0px width = 0px>
     <img id = "blueRook" src="images/Blue-Ghost-Left.png" alt="" height = 0px width = 0px>
@@ -156,9 +156,73 @@
 
     <div id = 'turns' style = "color: red">Red Player's Turn!</div>
     <div onclick = makeVisible()>
-        <span id = 'turnCount'>Turns Taken: 0</span>
-        <span id = 'tooltip' class = 'tooltip'>See Recent Moves</span>
+        <span id = 'turnCount'>See Move Log</span>
+        <span id = 'tooltip' class = 'tooltip'>This Tooltip Is Still Here Just For Fun!</span>
     </div>
+    <select id = "color" style = "margin-left: 43%">
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="pink">Pink</option>
+        <option value="orange">Orange</option>
+        <option value="black">Black</option>
+        <option value="white">White</option>
+    </select>
+
+    <select id="piece">
+        <option value="Rook">Rook</option>
+        <option value="Bishop">Bishop</option>
+        <option value="Knight">Knight</option>
+        <option value="King">King</option>
+        <option value="?">?</option>
+        <option value="emptySquare">Empty Square</option>
+    </select>
+
+    <select id="y-value">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+        <option value="H">H</option>
+        <option value="I">I</option>
+        <option value="J">J</option>
+        <option value="K">K</option>
+        <option value="L">L</option>
+        <option value="M">M</option>
+        <option value="N">N</option>
+        <option value="O">O</option>
+        <option value="P">P</option>
+        <option value="Q">Q</option>
+        <option value="R">R</option>
+        <option value="S">S</option>
+        <option value="T">T</option>
+    </select>
+
+    <select id="x-value">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+    </select>
+
     <table id = "chessboard"></table>
 
     <script>
@@ -273,22 +337,39 @@
         };
 
         function setBoard() {
-            let toggleButton = document.createElement("BUTTON");
-            toggleButton.setAttribute("onclick", "toggleTurns()");
-            toggleButton.innerHTML = "Turns: On";
-            toggleButton.id = 'toggle';
-            toggleButton.setAttribute("style", "margin: 0.5% 47.5%; width: 100px; color: green; font-weight: bold");
-            document.body.appendChild(toggleButton);
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
             start.id = "start";
-            start.innerHTML = "Start Game";
-            start.setAttribute("onclick", "start()");
+            start.innerHTML = "Place Piece";
+            start.setAttribute("onclick", "placePiece(document.getElementById('color').value.concat(document.getElementById('piece').value), document.getElementById('y-value').value.concat(document.getElementById('x-value').value))");
             document.body.appendChild(start);
             createBoard();
-            chooseColor();
-            fillTerritory({red: ['A2', 'B1'], blue: ['A19', 'B20'], pink:  ['S1', 'T2'], orange: ['S20', 'T19']});
+            makePieces();
         }
+
+        function placePiece(thePiece, destination) {
+            let tile = document.getElementById(`${destination}`);
+            let ctx = tile.getContext('2d');
+            if (!thePiece.includes('emptySquare')) {
+            let piece = chessPieces.find((piece) => {
+                if (thePiece.includes('?')) {
+                    return piece.id === 'questionMark1';
+                }
+                return piece.id === thePiece.concat('1');
+            });
+            ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
+            tile.piece = piece;
+            tile.lastColor = piece.color;
+            piece.currentPos = destination;
+            } else {
+                ctx.clearRect(0, 0, 300, 150);
+                delete tile.piece;
+                tile.lastColor = document.getElementById('color').value;
+            }
+            tile.currentColor = tile.lastColor;
+            tile.setAttribute('class', `${document.getElementById('color').value}Tile`);
+        } 
+
 // sets the board
         function createBoard() {
             let start = document.getElementById('start');
@@ -353,7 +434,22 @@
                 letterNum = 0;
                 number ++;
             }
-            document.body.insertBefore(board, start);
+            document.body.appendChild(board);
+        }
+
+
+        function makePieces() {
+            let colors = ['red', 'blue', 'pink', 'blue'];
+            for (let color of colors) {
+                createPiece('Rook', color, 1);
+                createPiece('Rook', color, 2);
+                createPiece('Bishop', color, 1);
+                createPiece('Bishop', color, 2)
+                createPiece('Knight', color, 1);
+                createPiece('Knight', color, 2);
+                createPiece('King', color, 1);
+                createPiece('Mark', 'question', 1);
+            }
         }
 
         function chooseColor() {
@@ -568,7 +664,7 @@
         }
 // sets the item's last color
         function isTurnLegal(color) {
-            if (turnToggle === 'on') {
+            if (turnToggle != 'on') {
                 return true; //THIS IS TEMPORARY!!!
             }
             let rightfulColor = null;
@@ -794,13 +890,6 @@
 
         function turnProgress(piece, tile) {
             turn ++;
-            let turnCounter = document.getElementById("turnCount");
-            turnCounter.innerHTML = `Turns Taken: ${turn - 1}`;
-            let player = document.getElementById('turns');
-            let rightfulColor = null;
-            turn % 4 === 2 ? rightfulColor = 'Blue' : turn % 4 === 3 ? rightfulColor = 'Pink' : turn % 4 === 0 ? rightfulColor = 'Orange' : rightfulColor = 'Red'; 
-            player.childNodes[0].nodeValue = `${rightfulColor} Player's Turn!`;
-            player.setAttribute("style", `color: ${rightfulColor.toLowerCase()}`);
             if (piece != 'knight') {
                 movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}`);
             } else {
