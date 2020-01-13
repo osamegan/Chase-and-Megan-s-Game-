@@ -172,6 +172,11 @@
         let innerArea = [];
         let movements = [];
         let log = '';
+        let players = [];
+        let player1 = {defeated: false, turn: true};
+        let player2 = {defeated: false};
+        let player3 = {defeated: false};
+        let player4 = {defeated: false};
         crossedTiles.fill = function(tile, color) {
             let allIds = crossedTiles.map(getId);
             let theHalf = 0;
@@ -273,6 +278,7 @@
         };
 
         function setBoard() {
+            players.push(player1, player2, player3, player4);
             let toggleButton = document.createElement("BUTTON");
             toggleButton.setAttribute("onclick", "toggleTurns()");
             toggleButton.innerHTML = "Turns: On";
@@ -358,9 +364,13 @@
 
         function chooseColor() {
             let color1 = "red";
+            player1.color = color1;
             let color2 = "blue";
+            player2.color = color2;
             let color3 = "pink";
+            player3.color = color3;
             let color4 = "orange";
+            player4.color = color4;
             setPieces([color1, color2, color3, color4]);
         }
 // names each color
@@ -397,6 +407,9 @@
             piece.color = color;
             piece.id = `${color}${type}${number}`;
             piece.movability = moves[piece.type];
+            piece.belongsTo = players.find((player) => {
+                return player.color === piece.color;
+            });
             chessPieces.push(piece);
         }
 // creates the pieces
@@ -571,13 +584,11 @@
             if (turnToggle === 'on') {
                 return true; //THIS IS TEMPORARY!!!
             }
-            let rightfulColor = null;
-            turn % 4 === 2 ? rightfulColor = 'blue' : turn % 4 === 3 ? rightfulColor = 'pink' : turn % 4 === 0 ? rightfulColor = 'orange' : rightfulColor = 'red'; 
-            if (rightfulColor === color) {
-                return true;
-            } else {
-                return false;
-            }
+            let player = players.find((player) => {
+                return player.turn === true;
+            });
+            let rightfulColor = player.color;
+            return rightfulColor === color ? true : false;
         }
 
         function findEnclosedTiles(tile) {
@@ -656,6 +667,18 @@
                 let square = innerArea.find((square) => {
                     return square.piece ? true : false;
                 });
+                if (square.piece.type === 'king') {
+                    let stolenTerritory = Array.from(document.getElementsByClassName(`${square.piece.color}Tile`))
+                    square.piece.belongsTo.defeated = true;
+                    stolenTerritory.forEach((square) => {
+                        square.setAttribute('class', `${tile.className}`);
+                        if (square.piece) {
+                            let ctx = square.getContext("2d");
+                            ctx.clearRect(0, 0, 300, 150);
+                            delete square.piece
+                        }
+                    })
+                }
                 let ctx = square.getContext("2d");
                 ctx.clearRect(0, 0, 300, 150);
                 delete square.piece;
@@ -794,12 +817,22 @@
 
         function turnProgress(piece, tile) {
             turn ++;
+            let lastPlayer = players.find((thePlayer) => {
+                return thePlayer.turn === true;
+            });
+            lastPlayer.turn = false;
+            let nextPlayer = players.find((player, index, array) => {
+                return !player.defeated && isGreaterThan(index, array.indexOf(lastPlayer), array);
+            })
+            nextPlayer.turn = true;
+            if (nexPlayer === lastPlayer) {
+                displayWinningScreen(nextPlayer);
+            }
             let turnCounter = document.getElementById("turnCount");
             turnCounter.innerHTML = `Turns Taken: ${turn - 1}`;
             let player = document.getElementById('turns');
-            let rightfulColor = null;
-            turn % 4 === 2 ? rightfulColor = 'Blue' : turn % 4 === 3 ? rightfulColor = 'Pink' : turn % 4 === 0 ? rightfulColor = 'Orange' : rightfulColor = 'Red'; 
-            player.childNodes[0].nodeValue = `${rightfulColor} Player's Turn!`;
+            let rightfulColor = nextPlayer.color;
+            player.childNodes[0].nodeValue = `${rightfulColor[0].toUpperCase().concat(rightfulColor.slice(1, rightfulColor.length))} Player's Turn!`;
             player.setAttribute("style", `color: ${rightfulColor.toLowerCase()}`);
             if (piece != 'knight') {
                 movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}`);
@@ -812,9 +845,20 @@
             logMove();
         }
 
+        function isGreaterThan(num1, num2, array) {
+            let livingPlayers = players.filter((player) => {
+                return !player.defeated;
+            })
+            return num1 === 0 && num2 === array.indexOf(livingPlayers[livingPlayers.length - 1]) ? true : num1 > num2;
+        }
+
         /*function checkLivingPieces() {
 
         }*/
+
+        function displayWinningScreen(player) {
+
+        }
 
         function start() {
             // makes everything work
