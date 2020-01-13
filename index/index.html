@@ -825,7 +825,7 @@
                 return !player.defeated && isGreaterThan(index, array.indexOf(lastPlayer), array);
             })
             nextPlayer.turn = true;
-            if (nexPlayer === lastPlayer) {
+            if (nextPlayer === lastPlayer) {
                 displayWinningScreen(nextPlayer);
             }
             let turnCounter = document.getElementById("turnCount");
