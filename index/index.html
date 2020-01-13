@@ -384,6 +384,9 @@
                     let tile = document.createElement("CANVAS");
                     tile.id = `${letters[letterNum]}${number}`
                     tile.setAttribute("class", "packed");
+                    let ctx = tile.getContext('2d');
+                    ctx.font = "90px Arial";
+                    ctx.textAlign = "center";
                     tile.addEventListener("click", (e) => {
                         if (selected.piece && checkLegality(selected.piece, tile.id) === 'legal' && !(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
                             if (tile.onmouseover) {
@@ -421,10 +424,21 @@
                         }
                     });
                     if (columnLength  % 2 === 0) {
-                        rowLength % 2 === 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
+                        if (rowLength % 2 === 0) {
+                            tile.setAttribute("class", "whiteTile");
+                            ctx.fillStyle = "black";
+                        } else {
+                            tile.setAttribute("class", "blackTile");
+                            ctx.fillStyle = "white";
+                        }
+                    } else if (rowLength % 2 != 0) {
+                        tile.setAttribute("class", "whiteTile");
+                        ctx.fillStyle = "black";
                     } else {
-                        rowLength % 2 != 0 ? tile.setAttribute("class", "whiteTile") : tile.setAttribute("class", "blackTile");
+                        tile.setAttribute("class", "blackTile");
+                        ctx.fillStyle = "white";
                     }
+                    ctx.fillText(`${tile.id}`, 130, 100);
                     tile.lastColor = tile.className.slice(0, tile.className.indexOf('T'));
                     row.appendChild(tile);
                     column.appendChild(row);
