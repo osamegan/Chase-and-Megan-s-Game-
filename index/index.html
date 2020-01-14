@@ -669,6 +669,16 @@
             if (innerArea.length > 0) {
                 broken = true;
             }
+            if (innerArea.some((square) => {
+                return square.piece && square.piece.type === 'bishop';
+            })) {
+                let bishopTile = innerArea.find((square) => {
+                    return square.piece && square.piece.type === 'bishop';
+                })
+                if (bishopContinuityTest(bishopTile)) {
+                    return;
+                }
+            }
             while (broken) {
                 innerArea.sort(function (a, b) {
                     return touches(a, `${tile.className}`, 1, 'unclosed') ? -1 : 1;
@@ -769,6 +779,28 @@
                     }
                 }
                 return trueCount >= direction;
+            }
+        }
+
+        function getCorners(tile) {
+            let corners = [];
+            let tileLetter = tile.id[0];
+            let tileNumer = Number(tile.id.slice(1, 3));
+            for (let i = 0; i < 4; i ++) {
+                let corner = document.getElementById(`${letters[operate(tileLetter, i)]}${operate(tileNumber, i)}`);
+                if (corner) {
+                    corners.push(corner);
+                }
+            }
+            return corners;
+        }
+
+        function operate(idPart, i) {
+            if (isNaN(idPart)) {
+                idPart = letters.indexOf(idPart);
+                return i < 3 ? idPart + 1 : idPart - 1;
+            } else {
+                return i > 1 ? idPart - 1 : idPart + 1;
             }
         }
 
@@ -876,6 +908,14 @@
                 player.defeated = true;
             }
         }
+
+        /* function bishopContinuityTest(bishopTile) {
+            let corners = getCorners(bishopTile);
+            let trueTiles = corners.map((corner) => {
+                return corner.className === bishopTile.className;
+            });
+
+       }*/
 
         function displayWinningScreen(player) {
 
