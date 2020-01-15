@@ -865,6 +865,7 @@
             nextPlayer.turn = true;
             if (nextPlayer === lastPlayer) {
                 displayWinningScreen(nextPlayer);
+                return;
             }
             let turnCounter = document.getElementById("turnCount");
             turnCounter.innerHTML = `Turns Taken: ${turn - 1}`;
@@ -909,16 +910,21 @@
             }
         }
 
-        /* function bishopContinuityTest(bishopTile) {
+        function bishopContinuityTest(bishopTile) {
+            /*
             let corners = getCorners(bishopTile);
             let trueTiles = corners.map((corner) => {
                 return corner.className === bishopTile.className;
-            });
-
-       }*/
+            });*/
+       }
 
         function displayWinningScreen(player) {
-
+            let currentPlayer = document.getElementById('turns');
+            currentPlayer.innerHTML = `${player.color[0].toUpperCase()}${player.color.slice(1, player.color.length)} Player Wins!`;
+            let allTiles = Array.from(document.getElementsByTagName("CANVAS"));
+            allTiles.forEach((tile) => {
+                tile.removeEventListener('click', (e));
+            });
         }
 
         function start() {
