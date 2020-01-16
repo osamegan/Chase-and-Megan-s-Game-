@@ -172,9 +172,10 @@
         let innerArea = [];
         let movements = [];
         let log = '';
+        let allTiles = [];
         let players = [];
         let player1 = {defeated: false, color: null, turn: true};
-        let player2 = {defeated: false};
+        let player2 = {defeated: false, color: null, turn: false, AI: true};
         let player3 = {defeated: false};
         let player4 = {defeated: false};
         crossedTiles.fill = function(tile, color) {
@@ -291,7 +292,7 @@
             start.id = "start";
             start.innerHTML = "Start Game";
             start.setAttribute("onclick", "start()");
-            document.body.appendChild(start);
+            //document.body.appendChild(start);
             createBoard();
             chooseColor();
             fillTerritory({red: ['A2', 'B1'], blue: ['A19', 'B20'], pink:  ['S1', 'T2'], orange: ['S20', 'T19']});
@@ -310,42 +311,7 @@
                     let tile = document.createElement("CANVAS");
                     tile.id = `${letters[letterNum]}${number}`
                     tile.setAttribute("class", "packed");
-                    tile.addEventListener("click", (e) => {
-                        if (selected.piece && checkLegality(selected.piece, tile.id) === 'legal' && !(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
-                            if (tile.onmouseover) {
-                                return true;
-                            }
-                        })) && isTurnLegal(selected.piece.color) && selected.tile.id === selected.piece.currentPos) {
-                            moveTo(selected.piece, tile.id);
-                            if (!crossedTiles.some(function(tile) {
-                                return tile.currentColor ? false : true;
-                            })) {
-                                crossedTiles.forEach(setLastColor);
-                            }
-                            selected.piece.type === 'knight' ? crossedTiles.slice(0, 4).forEach(setCurrentColor) : crossedTiles.forEach(setCurrentColor);
-                            selected.tile.setAttribute("style", "border: 1px solid black");
-                            let ctx = selected.tile.getContext("2d");
-                            ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
-                            if (selected.piece.type === 'knight' && crossedTiles.some((square) => {
-                return square.className != tile.className;
-            })) {
-                                ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
-                            }
-                            delete selected.piece;
-                            delete selected.tile.piece;
-                            delete selected.tile;
-                        } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
-                            if (tile.onmouseover) {
-                                return true;
-                            }
-                        }))) {
-                            empty(crossedTiles);
-                            tile.setAttribute("style", "border: 1px blue");
-                            selected.tile ? selected.tile.setAttribute("style", "border: 1px solid black") : selected.tile = tile;
-                            selected.tile = tile;
-                            tile.piece ? selected.piece = tile.piece : tile.piece = null;
-                        }
-                    });
+                    tile.addEventListener('click', click);
                     if (columnLength  % 2 === 0) {
                         if (rowLength % 2 === 0) {
                             tile.setAttribute("class", "whiteTile");
@@ -367,12 +333,95 @@
                     row.appendChild(tile);
                     column.appendChild(row);
                     letterNum ++;
+                    allTiles.push(tile);
                 }
                 board.appendChild(column);
                 letterNum = 0;
                 number ++;
             }
-            document.body.insertBefore(board, start);
+            document.body.appendChild(board);
+        }
+
+        let bot;
+
+        function click(event) {
+            let tile;
+            if (typeof(event) === 'string') {
+                tile = document.getElementById(event);
+            } else {
+                tile = event.toElement;
+            }
+            if (selected.piece && checkLegality(selected.piece, tile.id) === 'legal' && !(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
+                if (tile.onmouseover) {
+                    return true;
+                }
+            })) && isTurnLegal(selected.piece.color) && selected.tile.id === selected.piece.currentPos) {
+                bot = null;
+                moveTo(selected.piece, tile.id);
+                if (!crossedTiles.some(function(tile) {
+                    return tile.currentColor ? false : true;
+                })) {
+                    crossedTiles.forEach(setLastColor);
+                }
+                selected.piece.type === 'knight' ? crossedTiles.slice(0, 4).forEach(setCurrentColor) : crossedTiles.forEach(setCurrentColor);
+                selected.tile.setAttribute("style", "border: 1px solid black");
+                let ctx = selected.tile.getContext("2d");
+                ctx.clearRect(0, 0, selected.tile.width, selected.tile.height);
+                if (selected.piece.type === 'knight' && crossedTiles.some((square) => {
+                    return square.className != tile.className;
+                })) {
+                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                }
+                delete selected.piece;
+                delete selected.tile.piece;
+                delete selected.tile;
+                let com = players.find((player) => {
+                    return player.turn && player.AI;
+                });
+                if (com) {
+                    comMove(com);
+                }
+            } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
+                if (tile.onmouseover) {
+                    return true;
+                }
+            }))) {
+                empty(crossedTiles);
+                tile.setAttribute("style", "border: 1px blue");
+                selected.tile ? selected.tile.setAttribute("style", "border: 1px solid black") : selected.tile = tile;
+                selected.tile = tile;
+                tile.piece ? selected.piece = tile.piece : tile.piece = null;
+            }
+        }
+
+        let captureCount = 0;
+
+        function comMove(com) {
+            bot = true;
+            let pieces = chessPieces.filter((piece) => {
+                return piece.belongsTo === com;
+            });
+            let tilesToClick = allTiles.filter((tile) => {
+                return tile.piece && pieces.includes(tile.piece);
+            }).sort((a, b) => {
+                return pieces.indexOf(a.piece) - pieces.indexOf(b.piece); 
+            });
+            let legalMoves = [];
+            for (let tile of tilesToClick) {
+                for (let square of allTiles) {
+                    if (checkLegality(tile.piece, square.id) === 'legal') {
+                        square.className = tile.className;
+                        findPotentialInnerArea(square);
+                        square.className = `${square.lastColor}Tile`;
+                        legalMoves.push([tile.piece.type, square, tile.className === square.className ? crossedTiles.length : crossedTiles.length + 1, captureCount]);
+                        captureCount = 0;
+                    }
+                    empty(crossedTiles);
+                }
+            }
+            console.log(legalMoves.sort((a, b) => {
+                return b[2] - a[2];
+            }));
         }
 
         function chooseColor() {
@@ -698,26 +747,54 @@
                     broken = false;
                 }
             }
-            while (innerArea.some((square) => {
-                return square.piece ? true : false;
+            let i = 0;
+            while (innerArea.find((square,index) => {
+                return square.piece && index >= i;
             })) {
-                let square = innerArea.find((square) => {
-                    return square.piece ? true : false;
+                let square = innerArea.find((square, index) => {
+                    return square.piece && index >= i;
                 });
-                if (square.piece.type === 'king') {
+                i ++;
+                if (square && square.piece.type === 'king') {
                     let stolenTerritory = Array.from(document.getElementsByClassName(`${square.piece.color}Tile`))
+                    crossedTiles = stolenTerritory.concat(crossedTiles);
                     square.piece.belongsTo.defeated = true;
                     stolenTerritory.forEach((square) => {
                         square.setAttribute('class', `${tile.className}`);
                     })
+                    stolenTerritory.filter((tile) => {
+                        return tile.piece && tile.piece.belongsTo === square.piece.belongsTo;
+                    }).forEach((tile) => {
+                        captureCount ++;
+                        if (!bot) {
+                            let ctx = tile.getContext('2d');
+                            ctx.clearRect(0, 0, 300, 150);
+                            chessPieces.splice(chessPieces.indexOf(tile.piece), 1);
+                            delete tile.piece;
+                        }
+                    })
+                } else {
+                    captureCount ++;
+                    if (!bot) {
+                        let ctx = square.getContext("2d");
+                        ctx.clearRect(0, 0, 300, 150);
+                        let player = square.piece.belongsTo;
+                        chessPieces.splice(chessPieces.indexOf(square.piece), 1);
+                        delete square.piece;
+                        checkLivingPieces(player);
+                    }
                 }
-                let ctx = square.getContext("2d");
-                ctx.clearRect(0, 0, 300, 150);
-                let player = square.piece.belongsTo;
-                chessPieces.splice(chessPieces.indexOf(square.piece), 1);
-                delete square.piece;
-                checkLivingPieces(player);
             }
+        }
+
+        function findPotentialInnerArea(tile) {
+            crossedTiles.forEach((square) => {
+                square.className = tile.className;
+            });
+            findEnclosedTiles(tile);
+            crossedTiles.forEach((square) => {
+                square.className = `${square.lastColor}Tile`;
+            })
         }
 
         function noRepeatingNumbers(tile, index, array) {
@@ -874,13 +951,14 @@
             player.childNodes[0].nodeValue = `${rightfulColor[0].toUpperCase().concat(rightfulColor.slice(1, rightfulColor.length))} Player's Turn!`;
             player.setAttribute("style", `color: ${rightfulColor.toLowerCase()}`);
             if (piece != 'knight') {
-                movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}`);
+                movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}${captureCount > 0 ? '!' : ''}`);
             } else {
-                movements.push(`${tile.className[0].toUpperCase()}${tile.className.slice(1, tile.className.indexOf('T'))} knight: ${crossedTiles[0].id} to ${tile.id}`);
+                movements.push(`${tile.className[0].toUpperCase()}${tile.className.slice(1, tile.className.indexOf('T'))} knight: ${crossedTiles[0].id} to ${tile.id}${captureCount > 0 ? '!' : ''}`);
             }
             if (movements.length > 32) {
                 movements.shift();
             }
+            captureCount = 0;
             logMove();
         }
 
@@ -921,9 +999,8 @@
         function displayWinningScreen(player) {
             let currentPlayer = document.getElementById('turns');
             currentPlayer.innerHTML = `${player.color[0].toUpperCase()}${player.color.slice(1, player.color.length)} Player Wins!`;
-            let allTiles = Array.from(document.getElementsByTagName("CANVAS"));
             allTiles.forEach((tile) => {
-                tile.removeEventListener('click', (e));
+                tile.removeEventListener('click', click);
             });
         }
 
