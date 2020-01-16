@@ -176,8 +176,8 @@
         let players = [];
         let player1 = {defeated: false, color: null, turn: true};
         let player2 = {defeated: false, color: null, turn: false, AI: true};
-        let player3 = {defeated: false};
-        let player4 = {defeated: false};
+        let player3 = {defeated: false, color: null, turn: false, AI: true};
+        let player4 = {defeated: false, color: null, turn: false, AI: true};
         crossedTiles.fill = function(tile, color) {
             let allIds = crossedTiles.map(getId);
             let theHalf = 0;
@@ -379,7 +379,7 @@
                     return player.turn && player.AI;
                 });
                 if (com) {
-                    comMove(com);
+                    setTimeout(comMove, 50, com);
                 }
             } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
                 if (tile.onmouseover) {
@@ -395,33 +395,59 @@
         }
 
         let captureCount = 0;
+        let pieceRemoved;
 
         function comMove(com) {
             bot = true;
-            let pieces = chessPieces.filter((piece) => {
-                return piece.belongsTo === com;
-            });
-            let tilesToClick = allTiles.filter((tile) => {
-                return tile.piece && pieces.includes(tile.piece);
-            }).sort((a, b) => {
-                return pieces.indexOf(a.piece) - pieces.indexOf(b.piece); 
-            });
-            let legalMoves = [];
-            for (let tile of tilesToClick) {
-                for (let square of allTiles) {
-                    if (checkLegality(tile.piece, square.id) === 'legal') {
-                        square.className = tile.className;
-                        findPotentialInnerArea(square);
-                        square.className = `${square.lastColor}Tile`;
-                        legalMoves.push([tile.piece.type, square, tile.className === square.className ? crossedTiles.length : crossedTiles.length + 1, captureCount]);
-                        captureCount = 0;
+            for (let player of players) {
+                let playersPieces = chessPieces.filter((piece) => {
+                    return piece.belongsTo === player;
+                });
+                let playerTilesToClick = allTiles.filter((tile) => {
+                    return tile.piece && playersPieces.includes(tile.piece);
+                });
+                let legalMoves = [];
+                let otherPlayersMoves = [];
+                for (let tile of playerTilesToClick) {
+                    for (let square of allTiles) {
+                        if (checkLegality(tile.piece, square.id) === 'legal') {
+                            square.className = tile.className;
+                            findPotentialInnerArea(square);
+                            square.className = `${square.lastColor}Tile`;
+                            legalMoves.push([tile.piece, square, tile.className === square.className ? crossedTiles.length : crossedTiles.length + 1, captureCount]);
+                            captureCount = 0;
+                        }
+                        empty(crossedTiles);
                     }
-                    empty(crossedTiles);
+                }
+                if (player === com) {
+                    let comMoves = legalMoves;
+                    let bestMove = findBestMove(com, comMoves, otherPlayersMoves);
+                    click(bestMove[0].currentPos);
+                    click(bestMove[1].id);
+                } else {
+                    otherPlayersMoves = otherPlayersMoves.concat(legalMoves);
+                    empty(legalMoves);
                 }
             }
-            console.log(legalMoves.sort((a, b) => {
-                return b[2] - a[2];
-            }));
+        }
+
+        function findBestMove(com, comMoves, otherPlayersMoves) {
+            comMoves.sort((a, b) => {
+                if (b[3] - a[3] != 0) {
+                    return b[3] - a[3];
+                } else {
+                    return b[2] - a[2];
+                }
+            });
+            for (let move of comMoves) {
+                for (let otherMove of otherPlayersMoves) {
+                    if (pieceRemoved.belongsTo === com) {
+                        comMoves.splice(comMoves.indexOf(move), 1);
+                    }
+                }
+            }
+            return comMoves[0];
         }
 
         function chooseColor() {
@@ -766,6 +792,7 @@
                         return tile.piece && tile.piece.belongsTo === square.piece.belongsTo;
                     }).forEach((tile) => {
                         captureCount ++;
+                        pieceRemoved = tile.piece;
                         if (!bot) {
                             let ctx = tile.getContext('2d');
                             ctx.clearRect(0, 0, 300, 150);
@@ -775,6 +802,7 @@
                     })
                 } else {
                     captureCount ++;
+                    pieceRemoved = square.piece;
                     if (!bot) {
                         let ctx = square.getContext("2d");
                         ctx.clearRect(0, 0, 300, 150);
