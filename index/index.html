@@ -398,6 +398,7 @@
         let pieceRemoved;
 
         function comMove(com) {
+            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is thinking...`);
             bot = true;
             for (let player of players) {
                 let playersPieces = chessPieces.filter((piece) => {
@@ -414,7 +415,9 @@
                             square.className = tile.className;
                             findPotentialInnerArea(square);
                             square.className = `${square.lastColor}Tile`;
-                            legalMoves.push([tile.piece, square, tile.className === square.className ? crossedTiles.length : crossedTiles.length + 1, captureCount]);
+                            legalMoves.push([tile.piece, square, tile.className === square.className ? crossedTiles.filter((tile) => {
+                                return tile.className != square.className;
+                            }).length : crossedTiles.length + 1, captureCount]);
                             captureCount = 0;
                         }
                         empty(crossedTiles);
@@ -423,7 +426,11 @@
                 if (player === com) {
                     let comMoves = legalMoves;
                     let bestMove = findBestMove(com, comMoves, otherPlayersMoves);
+                    console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
                     click(bestMove[0].currentPos);
+                    if (bestMove[0].type === 'knight') {
+                        click(bestMove[1].id);
+                    }
                     click(bestMove[1].id);
                 } else {
                     otherPlayersMoves = otherPlayersMoves.concat(legalMoves);
@@ -433,6 +440,32 @@
         }
 
         function findBestMove(com, comMoves, otherPlayersMoves) {
+            let playersPieces = chessPieces.filter((piece) => {
+                    return piece.belongsTo === com;
+                });
+            let nextTilesToClick = allTiles.filter((tile) => {
+                    return tile.piece && playersPieces.includes(tile.piece);
+                });
+            for (let nextMove of comMoves) {
+                console.log(nextMove[0].type, nextMove[1].id);
+                for (let nextTile of nextTilesToClick) {
+                    for (let square of allTiles) {
+                        if (checkLegality(nextTile.piece, square.id) === 'legal') {
+                            square.className = nextTile.className;
+                            findPotentialInnerArea(square);
+                            square.className = `${square.lastColor}Tile`;
+                            let colorNumber = crossedTiles.filter((tile) => {
+                                return tile.className != square.className;
+                            }).length 
+                            nextMove[2] += nextTile.className === square.className ? colorNumber : colorNumber + 1;
+                        }
+                        empty(crossedTiles);
+                        if (comMoves.indexOf(nextMove) != 0 && nextMove[2] < comMoves[comMoves.indexOf(nextMove) - 1][2]) {
+                            break;
+                        }
+                    }
+                }
+            }
             comMoves.sort((a, b) => {
                 if (b[3] - a[3] != 0) {
                     return b[3] - a[3];
@@ -442,11 +475,12 @@
             });
             for (let move of comMoves) {
                 for (let otherMove of otherPlayersMoves) {
-                    if (pieceRemoved.belongsTo === com) {
+                    if (pieceRemoved.belongsTo === com || touches(otherMove[1], 'knight', 1)) {
                         comMoves.splice(comMoves.indexOf(move), 1);
                     }
                 }
             }
+            console.log(comMoves);
             return comMoves[0];
         }
 
@@ -866,7 +900,7 @@
                     }
                     return (touchingTiles[direction]) === tileType && trueCount < 2;
                 }
-            } else if (!enclosedness) {
+            } else if (!enclosedness && direction != 'knight') {
                 for (let tiles of Object.values(touchingTiles)) {
                     if (tileType && !tileType.includes('non') && tiles) {
                         tiles.className === tileType ? trueCount ++ : trueCount += 0;
@@ -877,7 +911,14 @@
                     }
                 }
                 return trueCount === direction;
-            } else {
+            } else if (tileType === 'knight') {
+                for (let tiles of Object.values(touchingTiles).concat(getCorners(tiles))) {
+                    if (tiles.piece.type === 'knight') {
+                        trueCount ++;
+                    }
+                }
+                return trueCount >= direction;
+                } else {
                 for (let tiles of Object.values(touchingTiles)) {
                     if (tiles && !innerArea.includes(tiles) && tiles.className != tileType) {
                         trueCount ++;
