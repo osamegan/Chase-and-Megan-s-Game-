@@ -174,10 +174,10 @@
         let log = '';
         let allTiles = [];
         let players = [];
-        let player1 = {defeated: false, color: null, turn: true};
+        let player1 = {defeated: false, color: null, turn: true, AI: false};
         let player2 = {defeated: false, color: null, turn: false, AI: true};
-        let player3 = {defeated: false, color: null, turn: false, AI: false};
-        let player4 = {defeated: false, color: null, turn: false, AI: false};
+        let player3 = {defeated: false, color: null, turn: false, AI: true};
+        let player4 = {defeated: false, color: null, turn: false, AI: true};
         crossedTiles.fill = function(tile, color) {
             let allIds = crossedTiles.map(getId);
             let theHalf = 0;
@@ -237,6 +237,12 @@
                 square.lastColor = tile.className.slice(0, tile.className.indexOf('T'));
             });
             empty(crossedTiles);
+            let com = players.find((player) => {
+                return player.turn && player.AI;
+            });
+            if (com) {
+                setTimeout(comMove, 1, com);
+            }
         }
         let turn = 1;
         let turnToggle = 'off';
@@ -248,7 +254,7 @@
                 knight: false,
                 range: Infinity,                
                 leavable: true,
-                importance: 2
+                importance: 800
             },
 
             bishop: {
@@ -258,7 +264,7 @@
                 knight: false,
                 range: Infinity,
                 leavable: true,
-                importance: 3
+                importance: 1200
             },
 
             knight: {
@@ -268,7 +274,7 @@
                 knight: true,
                 range: undefined,
                 leavable: true,
-                importance: 1
+                importance: 400
             },
 
             king: {
@@ -376,14 +382,18 @@
                 })) {
                     ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
                 }
-                delete selected.piece;
-                delete selected.tile.piece;
-                delete selected.tile;
                 let com = players.find((player) => {
                     return player.turn && player.AI;
                 });
-                if (com) {
+                if (com && selected.piece.type != 'knight') {
+                    delete selected.piece;
+                    delete selected.tile.piece;
+                    delete selected.tile;
                     setTimeout(comMove, 1, com);
+                } else {
+                    delete selected.piece;
+                    delete selected.tile.piece;
+                    delete selected.tile;
                 }
             } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
                 if (tile.onmouseover) {
@@ -400,124 +410,144 @@
 
         let captureCount = 0;
         let piecesRemoved = [];
+        let otherPlayersTileCount = 0;
 
         function comMove(com) {
             console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is thinking...`);
             bot = true;
-            let danger = pieceInDanger(com);
-            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com has just finished checking for danger...`);
+            otherPlayersTileCount = 0;
+            let othersBestMoves = otherPlayersBestMoves(com);
             let comTilesToClick = allTiles.filter((tile) => {
                 return tile.piece && tile.piece.belongsTo === com;
             });
             let comMoves = [];
             for (let piece of comTilesToClick) {
-                for (let tile of allTiles) {
+                for (let tile of allTiles.filter((tile) => {
+                        let isTrue = false;
+                        if (checkLegality(piece.piece, tile.id) === 'legal') {
+                            isTrue = true;
+                        }
+                        empty(crossedTiles);
+                        return isTrue;
+                    })) {
                     if (checkLegality(piece.piece, tile.id) === 'legal') {
                         tile.className = piece.className
                         findPotentialInnerArea(tile);
                         tile.className = `${tile.lastColor}Tile`;
-                        comMoves.push([piece.piece, tile, crossedTiles.filter((square) => {
+                        tile.piece = piece.piece;
+                        let colorNumber = crossedTiles.filter((square) => {
                             return square.className != tile.className;
-                        }).length, crossedTiles, captureCount]);
+                        }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                            return piece.importance;
+                        }).reduce((total, current) => {
+                            return total + current;
+                        }) : 0);
+                        for (let move of othersBestMoves) {
+                            if (checkLegality(move[0], move[1]) === 'legal') {
+                                piecesRemoved = [];
+                                document.getElementById(move[1]).className = `${move[0].color}Tile`;
+                                findPotentialInnerArea(move[1]);
+                                document.getElementById(move[1]).className = `${document.getElementById(move[1]).lastColor}Tile`;
+                                otherPlayersTileCount += crossedTiles.filter((square) => {
+                                    return square.className != `${move[0].color}Tile`;
+                                }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                                    return piece.importance;
+                                }).reduce((total, current) => {
+                                    return total + current;
+                                }) : 0);
+                            }
+                            empty(crossedTiles);
+                        }
+                        tile.piece = null;
+                        colorNumber -= otherPlayersTileCount;
+                        comMoves.push([piece.piece, tile, piece.piece === 'knight' ? colorNumber - 3 : colorNumber, crossedTiles]);
+                        otherPlayersTileCount = 0;
                     }
                     empty(crossedTiles);
                 }
             }
-            if (!danger[0]) {
-                let bestMove = findBestMove(com, comMoves, comTilesToClick);
-                console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
-                click(bestMove[0].currentPos);
-                if (bestMove[0].type === 'knight') {
-                    click(bestMove[1].id);
-                }
+            let bestMove = findBestMove(com, comMoves, comTilesToClick);
+            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
+            click(bestMove[0].currentPos);
             click(bestMove[1].id);
-            } else {
-                console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is attempting avoidance...`);
-                attemptAvoidance(danger, comMoves);
+            if (bestMove[0].type === 'knight') {
+                crossedTiles.set(bestMove[1]);
+                /*let option1 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
+                crossedTiles.fill(crossedTiles[4], com.color);
+                crossedTiles.set(crossedTiles[4]);
+                let option2 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
+                if (option1.length > option2.length || option1) {
+
+                }*/
             }
         }
 
-        function pieceInDanger(com) {
-            let endangeredPieces = [];
-            let danger = [];
+        function otherPlayersBestMoves(com) {
+            let otherPlayersMoves = [];
+            let bestMoves = [];
             for (let player of players.filter((player) => {
                 return player != com;
             })) {
-                let playerTilesToClick = allTiles.filter((tile) => {
+                for (let pieceTile of allTiles.filter((tile) => {
                     return tile.piece && tile.piece.belongsTo === player;
-                });
-                for (let piece of playerTilesToClick) {
-                    for (let tile of allTiles) {
-                        if (checkLegality(piece.piece, tile.id) === 'legal') {
-                            tile.className = piece.className;
-                            findPotentialInnerArea(tile);
-                            tile.className = `${tile.lastColor}Tile`;
-                            if (crossedTiles.some((tile) => {
-                                return tile.piece && tile.piece.belongsTo === com;
-                            })) {
-                                danger.push([piece.piece, crossedTiles.filter((tile) => {
-                                    return tile.piece && tile.piece.belongsTo === com;
-                                }).map((tile) => {
-                                    return tile.piece;
-                                }), crossedTiles]);
-                            }
+                })){
+                    for (let tile of allTiles.filter((tile) => {
+                        let isTrue = false;
+                        if (checkLegality(pieceTile.piece, tile.id) === 'legal') {
+                            isTrue = true;
                         }
+                        empty(crossedTiles);
+                        return isTrue;
+                    })) {
+                        checkLegality(pieceTile.piece, tile.id);
+                        tile.className = pieceTile.className;
+                        findPotentialInnerArea(tile);
+                        tile.className = `${tile.lastColor}Tile`;
+                        let colorNumber = crossedTiles.filter((square) => {
+                            return square.className != pieceTile.className;
+                        }).length;
+                        otherPlayersMoves.push([pieceTile.piece, tile.id, colorNumber + (piecesRemoved[0] ? piecesRemoved.reduce((total, current) => {
+                            return total + current.importance;
+                        }) : 0)]);
                         empty(crossedTiles);
                     }
                 }
+                bestMoves.push(otherPlayersMoves.find((move) => {
+                    return move[2] === Math.max.apply(null, otherPlayersMoves.map((move) => {
+                        return move[2];
+                    }));
+                }).slice(0, 2));
+                otherPlayersMoves = [];
             }
-                    return danger;
-        }
-
-        function attemptAvoidance(danger, comMoves) {
-            danger.sort((a, b) => {
-                return b[1].reduce(overallImportance) - a[1].reduce(overallImportance);
-            })
-            for (let threat of danger) {
-                let counterAttack = comMoves.find((move) => {
-                    return move[3].map(toIds).includes(threat[0].currentPos);
-                });
-                let endangeredPiece = threat[1][0];
-                if (counterAttack) {
-                    return counterAttack[1];
-                } 
-                if (danger.every((threat) => {
-                    return !threat[2].includes(document.getElementById(endangeredPiece.currentPos));
-                })) {
-                    return comMoves.find((move) => {
-                        danger.every((threat) => {
-                            return !threat[2].includes(document.getElementById(endangeredPiece.currentPos));
-                            });
-                    })[1];
-                }
-            }
-            return comMoves[0][1];
-        }
-
-        function overallImportance(total, current) {
-            return total + current.importance;
+            console.log(bestMoves);
+            return bestMoves;
         }
 
         function findBestMove(com, comMoves, comTilesToClick) {
             console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is finding the best move...`);
             findBestSetup(com, comMoves, comTilesToClick);
             console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com has just finished finding the best set-up...`);
-            comMoves.sort((a, b) => {
-                if (b[3] - a[3] != 0) {
-                    return b[3] - a[3];
-                } else {
-                    return b[2] - a[2];
-                }
-            });
             console.log(comMoves);
-            return comMoves[0];
+            return comMoves.find((move) => {
+                return move[2] === Math.max.apply(null, comMoves.map((move) => {
+                    return move[2];
+                    })
+                );
+            });
         }
 
         function findBestSetup(com, comMoves, comTilesToClick) {
             for (let nextMove of comMoves) {
                 let nextTile = document.getElementById(nextMove[0].currentPos);
                 nextTile.piece  = nextMove[0];
-                for (let square of allTiles) {
+                for (let square of allTiles.filter((tile) => {
+                        let isTrue = false;
+                        if (checkLegality(nextTile.piece, tile.id) === 'legal') {
+                            isTrue = true;
+                        }
+                        empty(crossedTiles);
+                        return isTrue;
+                    })) {
                         if (checkLegality(nextTile.piece, square.id) === 'legal') {
                             square.className = nextTile.className;
                             findPotentialInnerArea(square);
@@ -525,12 +555,9 @@
                             let colorNumber = crossedTiles.filter((tile) => {
                                 return tile.className != square.className;
                             }).length 
-                            nextMove[2] += colorNumber + 1;
+                            square.piece === 'knight' ? nextMove[2] += colorNumber - 3 : nextMove[2] += colorNumber;
                         }
                     empty(crossedTiles);
-                    if (comMoves.indexOf(nextMove) != 0 && nextMove[2] < comMoves[comMoves.indexOf(nextMove) - 1][2]) {
-                        break;
-                    }
                 }
             }
         }
@@ -557,7 +584,7 @@
                 createPiece('Knight', color, 2);
                 createPiece('King', color, 1);
             }
-            let positions = ["C1", "B3", "C2", "A3", "B2", "C3", "A1", "B18", "C20", "A18", "C19", "C18", "B19", "A20", "R1", "S3", "R2", "T3", "S2", "R3", "T1", "S18", "R20", "T18", "R19", "R18", "S19", "T20"];
+            let positions = ["C2", "A3", "C1", "B3", "B2", "C3", "A1", "B18", "C20", "A18", "C19", "C18", "B19", "A20", "R1", "S3", "R2", "T3", "S2", "R3", "T1", "T18", "R19", "S18", "R20", "R18", "S19", "T20"];
             for (let pieces in chessPieces) {
                 let position = positions[pieces];
                 if (position) {
@@ -888,7 +915,11 @@
                     })
                 } else {
                     captureCount ++;
-                    piecesRemoved.push(square.piece);
+                    if (square.piece.belongsTo != players.find((player) => {
+                        return player.turn === true;
+                    })) {
+                        piecesRemoved.push(square.piece);
+                    }
                     if (!bot) {
                         let ctx = square.getContext("2d");
                         ctx.clearRect(0, 0, 300, 150);
