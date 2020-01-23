@@ -6,10 +6,31 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chess.io</title>
 </head>
-<body onload = "setBoard()">
+<body>
 
     <style>
     
+    body {
+        background-color: black;
+        text-align: center;
+    }
+
+    h1 {
+        color: blue;
+        font-size: 50px;
+        font-weight: 200;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    }
+
+    h2 {
+        color: blue;
+        margin-top: 40px;
+    }
+
+    h2:hover {
+        color: darkred;
+    }
+
     .start {
         background-color: green;
         margin: 0% 48%;
@@ -19,27 +40,49 @@
         width:fit-content;
     }
     .chessboard {
-        width: 600px;
-        height: 600px;
+        width: 0px;
+        height: 0px;
         margin: auto;
         border-collapse: collapse;
         border-spacing: 0px;
+        border-color: blue;
+        border-style: solid;
+        visibility: hidden;
     }
  /* chessboard coordanites */
     .whiteTile {
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: white;
+        background-color: rgb(255, 255, 255);
         margin: 0px;
         border-collapse: collapse;
     }
+
+    .lightTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(201, 192, 192);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
+    .darkTile  {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(48, 45, 45);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
 /* White tile coordinates */
     .blackTile {
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: black;
+        background-color: rgb(0, 0, 0);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -66,7 +109,7 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: rgb(255, 224, 229);
+        background-color: rgb(226, 141, 155);
         margin: 0px;
         border-collapse: collapse;
     }
@@ -75,10 +118,56 @@
         border: 1px solid black;
         width: 30px;
         height: 30px;
-        background-color: rgb(255, 190, 70);
+        background-color: rgb(231, 137, 14);
         margin: 0px;
         border-collapse: collapse;
     }
+
+    .yellowTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(255, 242, 61);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
+    .greenTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: green;
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
+    .silverTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(124, 124, 124);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
+    .goldTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(228, 194, 0);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
+    .bronzeTile {
+        border: 1px solid black;
+        width: 30px;
+        height: 30px;
+        background-color: rgb(138, 96, 17);
+        margin: 0px;
+        border-collapse: collapse;
+    }
+
 /*  orange tile coordanites and coloring */
     .packed {
         padding: 0;
@@ -89,11 +178,17 @@
         display: inline-block;
     }
 
+    .buttonGroup {
+        margin: auto;
+        text-align: center;
+    }
+
     div {
         margin: 0% 46.25%;
         width: 150px;
         text-align: center;
         position: relative;
+        color: blue;
     }
 
     div:hover {
@@ -108,7 +203,7 @@
     .tooltip {
         position: absolute;
         color: black;
-        background-color: rgba(255, 251, 0, 0.5);
+        background-color: rgba(13, 45, 187, 0.678);
         font-size: 12px;
         padding: 5px 0px;
         z-index: 1;
@@ -121,6 +216,53 @@
         transition: opacity 0.7s;
     }
 
+    p {
+        color: blue;
+        font-size: 30px;
+        margin-top: 40px;
+        margin-bottom: 100px;
+    }
+
+    h3 {
+        color: blue;
+        font-size: 40px;
+        font-weight: bold;
+        margin-top: 0px;
+    }
+
+    select {
+        border-color: darkblue;
+        background-color: black;
+        color: blue;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 30px;
+        height: 40px;
+        width: 300px;
+        margin-left: -80px;
+    }
+
+    input {
+        border-color: darkblue;
+        background-color: black;
+        color: rgb(216, 17, 17);
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 30px;
+        height: 40px;
+        width: 300px;
+        margin-left: -80px;
+        margin-top: 0px;
+    }
+
+    button {
+        border-color: rgb(168, 1, 1);
+        background-color: black;
+        color: red;
+        font-weight: bold;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-size: 25px;
+        margin-top: 120px;
+    }
+
     .moveLog {
         visibility: hidden;
         margin: 0px 0px 0px 10px;
@@ -131,40 +273,127 @@
         text-align: center;
     }
 
+    .normal {
+        margin: auto;
+        height: 150px;
+        position: relative;
+        visibility: visible;
+        width: 500px;
+        background-color: rgb(5, 32, 150);
+    }
+
     </style>
     <pre class = 'moveLog' id = 'movementLog'></pre>
     <h1 style="text-align: center;">Chess.io</h1>
+    
+    <div class = "normal">
+        <img id = "goldKing" src="images/Gold-King.png" alt="" height = 150px width = 150px>
+    </div>
+    <div class = 'normal'>
+        <img id = "redRookLeft" src="images/Red-Ghost-Left.png" alt="" height = 100px width = 100px>
+        <img id = "blueRookLeft" src="images/Blue-Ghost-Left.png" alt="" height = 100px width = 100px>
+        <img id = "pinkRookLeft" src="images/Pink-Ghost-Left.png" alt="" height = 100px width = 100px>
+        <img id = "orangeRookLeft" src="images/Orange-Ghost-Left.png" alt="" height = 100px width = 100px>
+    </div>
+    <h2 id = 'rules'>Rules</h2>
+    <h2 id = 'begin' onclick = "playerSelect()">Play Game!</h2>
 
-    <img id = "redRook" src="images/Red-Ghost-Left.png" alt="" height = 0px width = 0px>
-    <img id = "blueRook" src="images/Blue-Ghost-Left.png" alt="" height = 0px width = 0px>
-    <img id = "pinkRook" src="images/Pink-Ghost-Left.png" alt="" height = 0px width = 0px>
-    <img id = "orangeRook" src="images/Orange-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "redRookLeft" src="images/Red-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "blueRookLeft" src="images/Blue-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "pinkRookLeft" src="images/Pink-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "orangeRookLeft" src="images/Orange-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "redRookRight" src="images/Red-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "redRookUp" src="images/Red-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "redRookDown" src="images/Red-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "blueRookRight" src="images/Blue-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "blueRookUp" src="images/Blue-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "blueRookDown" src="images/Blue-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "pinkRookRight" src="images/Pink-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "pinkRookUp" src="images/Pink-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "pinkRookDown" src="images/Pink-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "orangeRookRight" src="images/Orange-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "orangeRookUp" src="images/Orange-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "orangeRookDown" src="images/Orange-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "yellowRookLeft" src="images/Yellow-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "yellowRookRight" src="images/Yellow-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "yellowRookUp" src="images/Yellow-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "yellowRookDown" src="images/Yellow-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "greenRookLeft" src="images/Green-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "greenRookRight" src="images/Green-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "greenRookUp" src="images/Green-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "greenRookDown" src="images/Green-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "darkRookLeft" src="images/Black-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "darkRookRight" src="images/Black-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "darkRookUp" src="images/Black-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "darkRookDown" src="images/Black-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "lightRookLeft" src="images/White-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "lightRookRight" src="images/White-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "lightRookUp" src="images/White-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "lightRookDown" src="images/White-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "silverRookLeft" src="images/Silver-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "silverRookRight" src="images/Silver-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "silverRookUp" src="images/Silver-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "silverRookDown" src="images/Silver-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "goldRookLeft" src="images/Gold-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "goldRookRight" src="images/Gold-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "goldRookUp" src="images/Gold-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "goldRookDown" src="images/Gold-Ghost-Down.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeRookLeft" src="images/Bronze-Ghost-Left.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeRookRight" src="images/Bronze-Ghost-Right.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeRookUp" src="images/Bronze-Ghost-Up.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeRookDown" src="images/Bronze-Ghost-Down.png" alt="" height = 0px width = 0px>
     <img id = "redKnight" src="images/Red-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "blueKnight" src="images/Blue-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "pinkKnight" src="images/Pink-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "orangeKnight" src="images/Orange-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "yellowKnight" src="images/Yellow-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "greenKnight" src="images/Green-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "darkKnight" src="images/Black-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "lightKnight" src="images/White-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "silverKnight" src="images/Silver-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "goldKnight" src="images/Gold-Pacman.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeKnight" src="images/Bronze-Pacman.png" alt="" height = 0px width = 0px>
     <img id = "redBishop" src="images/Scared-Ghost-Red.png" alt="" height = 0px width = 0px>
     <img id = "blueBishop" src="images/Scared-Ghost-Blue.png" alt="" height = 0px width = 0px>
     <img id = "pinkBishop" src="images/Scared-Ghost-Pink.png" alt="" height = 0px width = 0px>
     <img id = "orangeBishop" src="images/Scared-Ghost-Orange.png" alt="" height = 0px width = 0px>
+    <img id = "yellowBishop" src="images/Scared-Ghost-Yellow.png" alt="" height = 0px width = 0px>
+    <img id = "greenBishop" src="images/Scared-Ghost-Green.png" alt="" height = 0px width = 0px>
+    <img id = "darkBishop" src="images/Scared-Ghost-Black.png" alt="" height = 0px width = 0px>
+    <img id = "lightBishop" src="images/Scared-Ghost-White.png" alt="" height = 0px width = 0px>
+    <img id = "silverBishop" src="images/Scared-Ghost-Silver.png" alt="" height = 0px width = 0px>
+    <img id = "goldBishop" src="images/Scared-Ghost-Gold.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeBishop" src="images/Scared-Ghost-Bronze.png" alt="" height = 0px width = 0px>
     <img id = "redKing" src="images/Red-King.png" alt="" height = 0px width = 0px>
     <img id = "blueKing" src="images/Blue-King.png" alt="" height = 0px width = 0px>
     <img id = "pinkKing" src="images/Pink-King.png" alt="" height = 0px width = 0px>
     <img id = "orangeKing" src="images/Orange-King.png" alt="" height = 0px width = 0px>
+    <img id = "yellowKing" src="images/Yellow-King.png" alt="" height = 0px width = 0px>
+    <img id = "greenKing" src="images/Green-King.png" alt="" height = 0px width = 0px>
+    <img id = "darkKing" src="images/Black-King.png" alt="" height = 0px width = 0px>
+    <img id = "lightKing" src="images/White-King.png" alt="" height = 0px width = 0px>
+    <img id = "silverKing" src="images/Silver-King.png" alt="" height = 0px width = 0px>
+    <img id = "goldKing" src="images/Gold-King.png" alt="" height = 0px width = 0px>
+    <img id = "bronzeKing" src="images/Bronze-King.png" alt="" height = 0px width = 0px>
+
     <img id = "questionMark" src = "images/Question Mark.png" alt="" height = 0px width = 0px>
 <!-- names pictures -->
 
-    <div id = 'turns' style = "color: red">Red Player's Turn!</div>
-    <div onclick = makeVisible()>
-        <span id = 'turnCount'>Turns Taken: 0</span>
+    <span id = 'turns' style = "color: red; visibility: hidden;">Red Player's Turn!</span>
+
+    <div id = 'container' style = "visibility: hidden;" onclick = makeVisible()>
+        <span id = 'turnCount' style = 'color: blue; visibility: hidden;'>Turn: 1</span>
         <span id = 'tooltip' class = 'tooltip'>See Recent Moves</span>
     </div>
+
     <table id = "chessboard"></table>
 
     <script>
         
         let board = document.getElementById("chessboard");
         board.setAttribute("class", "chessboard");
+        let dpi = window.devicePixelRatio;
+        let dim = 27.5;
         let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
         let chessPieces = [];
         let selected = {};
@@ -174,10 +403,10 @@
         let log = '';
         let allTiles = [];
         let players = [];
-        let player1 = {defeated: false, color: null, turn: true};
-        let player2 = {defeated: false, color: null, turn: false, AI: true};
-        let player3 = {defeated: false, color: null, turn: false, AI: true};
-        let player4 = {defeated: false, color: null, turn: false, AI: true};
+        let player1 = {number: 'one', defeated: false, color: null, turn: true, AI: false};
+        let player2 = {number: 'two', defeated: false, color: null, turn: false, AI: true};
+        let player3 = {number: 'three', defeated: false, color: null, turn: false, AI: true};
+        let player4 = {number: 'four', defeated: false, color: null, turn: false, AI: true};
         crossedTiles.fill = function(tile, color) {
             let allIds = crossedTiles.map(getId);
             let theHalf = 0;
@@ -195,7 +424,7 @@
                 let ctx = document.getElementById(square).getContext("2d");
                 let questionMark = document.getElementById('questionMark');
                 if (((index != 3 && theHalf === 1) || (theHalf === 2 && index != 0)) && !document.getElementById(square).piece) {
-                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                    ctx.drawImage(questionMark,  0, 0, dim, dim);
                 }
             })
             fillTerritory({[color]: ids});
@@ -237,6 +466,12 @@
                 square.lastColor = tile.className.slice(0, tile.className.indexOf('T'));
             });
             empty(crossedTiles);
+            let com = players.find((player) => {
+                return player.turn && player.AI;
+            });
+            if (com) {
+                setTimeout(comMove, 1, com);
+            }
         }
         let turn = 1;
         let turnToggle = 'off';
@@ -284,13 +519,24 @@
         //gives each piece their possible moves
 
         function setBoard() {
-            players.push(player1, player2, player3, player4);
+            board.setAttribute('style', 'visibility: visible;');
+            let container = document.getElementById('container');
+            container.removeAttribute('style', 'visibility: hidden;');
+            let turns = document.getElementById('turns');
+            turns.removeAttribute('style', 'visibility: hidden;');
+            turns.setAttribute('style', 'margin-left: 0px;');
+            let currentPlayer = players.find((player) => {
+                return player.turn;
+            });
+            turns.innerHTML = `${currentPlayer.color[0].toUpperCase()}${currentPlayer.color.slice(1, currentPlayer.color.length)} Player's Turn!`
+            turns.setAttribute('style', `color: ${players[0].color != 'black' && players[0].color != 'bronze' ? players[0].color : players[0].color === 'black' ? 'rgb(24, 24, 24)' : 'brown'}`);
+            document.getElementById('turnCount').removeAttribute('style','visibility: hidden;');
             let toggleButton = document.createElement("BUTTON");
             toggleButton.setAttribute("onclick", "toggleTurns()");
             toggleButton.innerHTML = "Turns: On";
             toggleButton.id = 'toggle';
             toggleButton.setAttribute("style", "margin: 0.5% 47.5%; width: 100px; color: green; font-weight: bold");
-            document.body.appendChild(toggleButton);
+            //document.body.appendChild(toggleButton);
             let start = document.createElement("BUTTON");
             start.setAttribute("class", "start");
             start.id = "start";
@@ -298,8 +544,6 @@
             start.setAttribute("onclick", "start()");
             //document.body.appendChild(start);
             createBoard();
-            chooseColor();
-            fillTerritory({red: ['A2', 'B1'], blue: ['A19', 'B20'], pink:  ['S1', 'T2'], orange: ['S20', 'T19']});
         }
 // sets the board
         function createBoard() {
@@ -315,6 +559,8 @@
                     let tile = document.createElement("CANVAS");
                     tile.id = `${letters[letterNum]}${number}`
                     tile.setAttribute("class", "packed");
+                    tile.width = 20 * dpi;
+                    tile.height = 20 * dpi;
                     tile.addEventListener('click', click);
                     if (columnLength  % 2 === 0) {
                         if (rowLength % 2 === 0) {
@@ -374,16 +620,20 @@
                 if (selected.piece.type === 'knight' && crossedTiles.some((square) => {
                     return square.className != tile.className;
                 })) {
-                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                    ctx.drawImage(questionMark,  0, 0, dim, dim);
                 }
-                delete selected.piece;
-                delete selected.tile.piece;
-                delete selected.tile;
                 let com = players.find((player) => {
                     return player.turn && player.AI;
                 });
-                if (com) {
-                    setTimeout(comMove, 50, com);
+                if (com && selected.piece.type != 'knight') {
+                    delete selected.piece;
+                    delete selected.tile.piece;
+                    delete selected.tile;
+                    setTimeout(comMove, 1, com);
+                } else {
+                    delete selected.piece;
+                    delete selected.tile.piece;
+                    delete selected.tile;
                 }
             } else if (!(Array.from(document.getElementsByTagName("CANVAS")).some(function(tile) {
                 if (tile.onmouseover) {
@@ -399,140 +649,362 @@
         }
 
         let captureCount = 0;
-        let pieceRemoved;
+        let piecesRemoved = [];
+        let otherPlayersTileCount = 0;
+
+        function thinking() {
+            let player = document.getElementById('turns');
+            player.innerHTML += '.';
+            setTimeout(wait, 1000, player);
+        }
+
+        function wait(player) {
+            player.innerHTML = player.innerHTML.slice(0, player.innerHTML.indexOf('.'));
+        }
 
         function comMove(com) {
             console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is thinking...`);
-            bot = true;
-            let score = 0;
-            let lastScore = 0;
-            let move = [];
-            let moves = [];
-            let comTilesToClick = Array.from(document.getElementsByClassName(`${com.color}Tile`)).filter((tile) => {
-                return tile.piece;
+            //let think = setInterval(thinking, 333);
+            allTiles.forEach((tile) => {
+                tile.removeEventListener('click', click);
             });
-            for (let pieceTile of comTilesToClick) {
+            bot = true;
+            otherPlayersTileCount = 0;
+            let othersBestMoves = otherPlayersBestMoves(com);
+            let comTilesToClick = allTiles.filter((tile) => {
+                return tile.piece && tile.piece.belongsTo === com;
+            });
+            let comMoves = [];
+            for (let piece of comTilesToClick) {
                 for (let tile of allTiles.filter((tile) => {
-                    let isTrue = false;
-                    if (checkLegality(pieceTile.piece, tile.id) === 'legal') {
-                        isTrue = true;
-                    }
-                    empty(crossedTiles);
-                    return isTrue;
-                })) {
-                    if (checkLegality(pieceTile.piece, tile.id) === 'legal') {
-                        tile.piece = pieceTile.piece;
-                        crossedTiles.forEach((square) => {
-                            square.className = pieceTile.className;
-                        });
-                        findEnclosedTiles(tile);
-                        score += crossedTiles.length;
-                        let captured = crossedTiles.filter((tile) => {
-                            return tile.piece && tile.piece.belongsTo != com;
-                        }).map((tile) => {
-                            return tile.piece.importance
-                        });
-                        if (captured[0]) {
-                            score += captured.reduce((total, current) => {
-                            return total + current;
-                            });
+                        let isTrue = false;
+                        if (checkLegality(piece.piece, tile.id) === 'legal') {
+                            isTrue = true;
                         }
                         empty(crossedTiles);
-                        for (let player of players.filter((player) => {
-                            return player != com;
-                        })) {
-                            let playerTilesToClick = Array.from(document.getElementsByClassName(`${player.color}Tile`)).filter((tile) => {
-                                return tile.piece;
-                            });
-                            for (let occupied of playerTilesToClick) {
-                                for (let square of allTiles.filter((tile) => {
-                                    let isTrue = false;
-                                    if (checkLegality(occupied.piece, tile.id) === 'legal') {
-                                        isTrue = true;
-                                    }
-                                    empty(crossedTiles);
-                                    return isTrue;
-                                })) {
-                                    if (checkLegality(occupied.piece, square.id) === 'legal') {
-                                        crossedTiles.forEach((tile) => {
-                                            tile.className = occupied.className;
-                                        });
-                                        findEnclosedTiles(square);
-                                        crossedTiles.forEach((tile) => {
-                                            tile.className = `${tile.lastColor}Tile`;
-                                         });
-                                         score -= crossedTiles.length;
-                                         let endangered = crossedTiles.filter((tile) => {
-                                             return tile.piece && tile.piece.belongsTo === com;
-                                         }).map((tile) => {
-                                             return tile.piece.importance;
-                                         });
-                                         if (endangered[0]) {
-                                             score -= endangered.reduce((total, current) => {
-                                                return total + current;
-                                            });
-                                         }
-                                    }
-                                    empty(crossedTiles);
-                                }
+                        return isTrue;
+                    })) {
+                    if (checkLegality(piece.piece, tile.id) === 'legal') {
+                        tile.className = piece.className
+                        findPotentialInnerArea(tile);
+                        tile.className = `${tile.lastColor}Tile`;
+                        tile.piece = piece.piece;
+                        let colorNumber = crossedTiles.filter((square) => {
+                            return square.className != tile.className;
+                        }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                            return piece.importance;
+                        }).reduce((total, current) => {
+                            return total + current;
+                        }) : 0);
+                        for (let move of othersBestMoves) {
+                            if (checkLegality(move[0], move[1]) === 'legal') {
+                                piecesRemoved = [];
+                                document.getElementById(move[1]).className = `${move[0].color}Tile`;
+                                findPotentialInnerArea(move[1]);
+                                document.getElementById(move[1]).className = `${document.getElementById(move[1]).lastColor}Tile`;
+                                otherPlayersTileCount += crossedTiles.filter((square) => {
+                                    return square.className != `${move[0].color}Tile`;
+                                }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                                    return piece.importance;
+                                }).reduce((total, current) => {
+                                    return total + current;
+                                }) : 0);
                             }
-                        }  
-                        for (let nextPieceTile of comTilesToClick) {
-                                for (let nextTile of allTiles.filter((tile) => {
-                                    let isTrue = false;
-                                    if (checkLegality(nextPieceTile.piece, tile.id) === 'legal') {
-                                        isTrue = true;
-                                    }
-                                    empty(crossedTiles);
-                                    return isTrue;
-                                })) {
-                                    if (checkLegality(nextPieceTile.piece, nextTile.id) === 'legal') {
-                                        crossedTiles.forEach((square) => {
-                                            square.className = nextPieceTile.className;
-                                        });
-                                        findEnclosedTiles(nextTile);
-                                        crossedTiles.forEach((square) => {
-                                            square.className = `${square.lastColor}Tile`;
-                                        });
-                                        score += crossedTiles.length;
-                                    }
-                                    empty(crossedTiles);
-                                }
-                            }
-                        crossedTiles.forEach((square) => {
-                            square.className = `${square.lastColor}Tile`;
-                        });
-                        tile.piece = null;
-                        moves.push([pieceTile.id, tile.id, score]);
-                        if (score >= lastScore) {
-                            move = [pieceTile.id, tile.id, score];
+                            empty(crossedTiles);
                         }
-                        lastScore = score;
-                        score = 0;
-                        console.log(score, lastScore);
+                        tile.piece = null;
+                        colorNumber -= otherPlayersTileCount;
+                        comMoves.push([piece.piece, tile, piece.piece === 'knight' ? colorNumber - 3 : colorNumber, crossedTiles]);
+                        otherPlayersTileCount = 0;
                     }
+                    empty(crossedTiles);
                 }
             }
+            let bestMove = findBestMove(com, comMoves, comTilesToClick);
             console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
-            console.log(move);
-            click(move[0]);
-            click(move[1]);
-            let theTile = document.getElementById(move[1]);
-            if (theTile.piece.type === 'knight') {
-                crossedTiles.set(theTile);
+            allTiles.forEach((tile) => {
+                tile.addEventListener('click', click);
+            });
+            click(bestMove[0].currentPos);
+            click(bestMove[1].id);
+            if (bestMove[0].type === 'knight') {
+                crossedTiles.set(bestMove[1]);
+                /*let option1 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
+                crossedTiles.fill(crossedTiles[4], com.color);
+                crossedTiles.set(crossedTiles[4]);
+                let option2 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
+                if (option1.length > option2.length || option1) {
+
+                }*/
+            }
+           // clearInterval(think);
+        }
+
+        function otherPlayersBestMoves(com) {
+            let otherPlayersMoves = [];
+            let bestMoves = [];
+            for (let player of players.filter((player) => {
+                return player != com;
+            })) {
+                for (let pieceTile of allTiles.filter((tile) => {
+                    return tile.piece && tile.piece.belongsTo === player;
+                })){
+                    for (let tile of allTiles.filter((tile) => {
+                        let isTrue = false;
+                        if (checkLegality(pieceTile.piece, tile.id) === 'legal') {
+                            isTrue = true;
+                        }
+                        empty(crossedTiles);
+                        return isTrue;
+                    })) {
+                        checkLegality(pieceTile.piece, tile.id);
+                        tile.className = pieceTile.className;
+                        findPotentialInnerArea(tile);
+                        tile.className = `${tile.lastColor}Tile`;
+                        let colorNumber = crossedTiles.filter((square) => {
+                            return square.className != pieceTile.className;
+                        }).length;
+                        otherPlayersMoves.push([pieceTile.piece, tile.id, colorNumber + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                            return piece.importance;
+                        }).reduce((total, current) => {
+                            return total + current.importance;
+                        }) : 0)]);
+                        empty(crossedTiles);
+                    }
+                }
+                console.log(otherPlayersMoves.map((move) => {
+                        return move[2];
+                }));
+                bestMoves.push(otherPlayersMoves.find((move) => {
+                    return move[2] === Math.max.apply(null, otherPlayersMoves.map((move) => {
+                        return move[2];
+                    }));
+                }).slice(0, 2));
+                otherPlayersMoves = [];
+            }
+            console.log(bestMoves);
+            return bestMoves;
+        }
+
+        function findBestMove(com, comMoves, comTilesToClick) {
+            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is finding the best move...`);
+            findBestSetup(com, comMoves, comTilesToClick);
+            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com has just finished finding the best set-up...`);
+            console.log(comMoves);
+            return comMoves.find((move) => {
+                return move[2] === Math.max.apply(null, comMoves.map((move) => {
+                    return move[2];
+                    })
+                );
+            });
+        }
+
+        function findBestSetup(com, comMoves, comTilesToClick) {
+            for (let nextMove of comMoves) {
+                let nextTile = document.getElementById(nextMove[0].currentPos);
+                nextTile.piece  = nextMove[0];
+                for (let square of allTiles.filter((tile) => {
+                        let isTrue = false;
+                        if (checkLegality(nextTile.piece, tile.id) === 'legal') {
+                            isTrue = true;
+                        }
+                        empty(crossedTiles);
+                        return isTrue;
+                    })) {
+                        if (checkLegality(nextTile.piece, square.id) === 'legal') {
+                            square.className = nextTile.className;
+                            findPotentialInnerArea(square);
+                            square.className = `${square.lastColor}Tile`;
+                            let colorNumber = crossedTiles.filter((tile) => {
+                                return tile.className != square.className;
+                            }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                            return piece.importance;
+                        }).reduce((total, current) => {
+                            return total + current;
+                        }) : 0);
+                            square.piece === 'knight' ? nextMove[2] += colorNumber - 3 : nextMove[2] += colorNumber;
+                        }
+                    empty(crossedTiles);
+                }
             }
         }
 
+        function playerSelect() {
+            players.push(player1, player2, player3, player4);
+            document.body.removeChild(document.getElementById('rules'));
+            document.body.removeChild(document.getElementById('begin'));
+            Array.from(document.getElementsByClassName('normal')).forEach((element) => {
+                document.body.removeChild(element);
+            });
+            let playerSelect = document.createElement("SELECT");
+            let p = document.createElement('P');
+            p.innerHTML = 'Select Number of Players';
+            p.id = 'p';
+            playerSelect.id = 'playerSelect';
+            for (let player of players) {
+                let playerCount = document.createElement("OPTION");
+                playerCount.innerHTML = `${player.number[0].toUpperCase()}${player.number.slice(1, player.number.length)}-Player Game`;
+                playerSelect.appendChild(playerCount);
+            }
+            document.body.appendChild(p);
+            let buttonGroup = document.createElement("DIV");
+            buttonGroup.id = 'buttonGroup';
+            buttonGroup.className = 'buttonGroup';
+            buttonGroup.appendChild(playerSelect);
+            document.body.appendChild(buttonGroup);
+            let confirm = document.createElement('BUTTON');
+            confirm.innerHTML = 'Confirm';
+            confirm.setAttribute('onclick', 'nameSelect()');
+            buttonGroup.appendChild(confirm);
+        }
+
+        let stop = 'zero';
+
+        function nameSelect() {
+            if (document.getElementById('p')) {
+                document.body.removeChild(document.getElementById('p'));
+            }
+            let currentPlayer = players.find((player) => {
+                return player.turn === true;
+            });
+            if (currentPlayer === player1) {
+                let select = document.getElementById('playerSelect');
+                stop = select.value.slice(0, select.value.indexOf('-')).toLowerCase();
+                document.body.removeChild(document.getElementById('buttonGroup'));
+            }
+            let player = document.createElement("H3");
+            player.innerHTML = `Player ${currentPlayer.number[0].toUpperCase()}${currentPlayer.number.slice(1, currentPlayer.number.length)}`;
+            player.id = `Player`;
+            document.body.appendChild(player);
+            let p = document.createElement('P');
+            p.innerHTML = "Enter the name of your kingdom";
+            p.id = 'p';
+            document.body.appendChild(p);
+            let kingdomName = document.createElement("INPUT");
+            kingdomName.id = 'name';
+            let confirm = document.createElement("BUTTON");
+            confirm.innerHTML = 'Confirm';
+            confirm.id = 'confirm';
+            confirm.onclick = function() {
+                currentPlayer.kingdomName = kingdomName.value;
+            }
+            confirm.addEventListener('click', colorSelect);
+            let buttonGroup = document.createElement("DIV");
+            buttonGroup.id = 'buttonGroup';
+            buttonGroup.className = 'buttonGroup';
+            document.body.appendChild(buttonGroup);
+            buttonGroup.appendChild(kingdomName);
+            buttonGroup.appendChild(confirm);
+        }
+
+        function colorSelect() {
+            document.body.removeChild(document.getElementById('p'));
+            document.body.removeChild(document.getElementById('buttonGroup'));
+            let player = players.find((player) => {
+                return player.turn;
+            });
+            let choice = document.createElement("SELECT");
+            let colors = ["Red", "Blue", "Pink", "Orange", "Yellow", "Green", "Black", "White", "Silver", "Gold", "Bronze"];
+            let takenColors = players.filter((player) => {
+                return player.color;
+            }).map((player) => {
+                return player.color[0].toUpperCase().concat(player.color.slice(1, player.color.length));
+            });
+            takenColors.forEach((color) => {
+                colors.splice(colors.indexOf(color), 1);
+            });
+            for (let color of colors) {
+                let option = document.createElement("OPTION");
+                option.innerHTML = color;
+                option.setAttribute('style', `color: ${color != "Black" && color != "Bronze" ? color.toLowerCase() : color === "Black" ? 'rgb(24, 24, 24)' : 'brown'}`);
+                choice.appendChild(option);
+            }
+            choice.setAttribute('style', 'color: red');
+            choice.addEventListener('change', function() {
+                choice.setAttribute('style', `color: ${choice.value.toLowerCase() != "black" && choice.value.toLowerCase() != "bronze" ? choice.value.toLowerCase() : choice.value.toLowerCase() === "black" ? 'rgb(24, 24, 24)' : 'brown'}`);
+            });
+            let p = document.createElement("P");
+            p.innerHTML = "Choose your kingdom's color";
+            p.id = 'p';
+            document.body.appendChild(p);
+            choice.id = player.number;
+            let buttonGroup = document.createElement("DIV");
+            buttonGroup.id = 'buttonGroup';
+            buttonGroup.className = 'buttonGroup';
+            document.body.appendChild(buttonGroup);
+            buttonGroup.appendChild(choice);
+            let confirm = document.createElement("BUTTON");
+            confirm.innerHTML = 'Confirm';
+            confirm.id = 'confirm';
+            confirm.setAttribute('onclick', 'setColor()');
+            buttonGroup.appendChild(confirm);
+        }
+
+        function setColor() {
+            let player = players.find((player) => {
+                return player.turn;
+            });
+            player.color = document.getElementById(player.number).value.toLowerCase();
+            if (player.color === 'white') {
+                player.color = 'light';
+            }
+            if (player.color === 'black') {
+                player.color = 'dark';
+            }
+            player.turn = false;
+            if (players.indexOf(player) != 3 && stop != player.number) {
+                players[players.indexOf(player) + 1].turn = true;
+                player.AI = false;
+                document.body.removeChild(document.getElementById('buttonGroup'));
+                document.body.removeChild(document.getElementById('p'));
+                let ready = document.createElement("H3");
+                ready.id = 'ready';
+                ready.innerHTML = `Ready ${document.getElementById('Player').innerHTML}!`;
+                ready.setAttribute('style', 'color: red; font-family: impact; margin: 100px');
+                document.body.removeChild(document.getElementById('Player'));
+                document.body.appendChild(ready);
+                setTimeout(readyPlayer, 3000);
+            } else {
+                player.AI = false;
+                document.body.removeChild(document.getElementById('buttonGroup'));
+                document.body.removeChild(document.getElementById('p'));
+                players.slice(players.indexOf(player) + 1, players.length).forEach((player, index) => {
+                    player.AI = true;
+                    let defaultColors = ['red', 'blue', 'pink', 'orange'];
+                    let freeDefaultColors = defaultColors.filter((color) => {
+                        return players.every((player) => {
+                            return player.color != color;
+                        });
+                    });
+                    player.color = freeDefaultColors[0];
+                });
+                players.forEach((player) => {
+                    player.turn = false;
+                });
+                player1.turn = true;
+                let ready = document.createElement("H3");
+                ready.id = 'ready';
+                ready.innerHTML = `Ready ${document.getElementById('Player').innerHTML}!`;
+                ready.setAttribute('style', 'color: red; font-family: impact; margin: 100px;');
+                document.body.removeChild(document.getElementById('Player'));
+                document.body.appendChild(ready);
+                setTimeout(readyPlayer, 3000);
+            }
+        }
+
+        function readyPlayer() {
+            let ready = document.getElementById('ready');
+            document.body.removeChild(ready);
+            player1.turn === true ? chooseColor() : nameSelect();
+        }
+
         function chooseColor() {
-            let color1 = "red";
-            player1.color = color1;
-            let color2 = "blue";
-            player2.color = color2;
-            let color3 = "pink";
-            player3.color = color3;
-            let color4 = "orange";
-            player4.color = color4;
-            setPieces([color1, color2, color3, color4]);
+            let colors = [];
+            for (let player of players) {
+                colors.push(player.color);
+            }
+            setBoard();
+            setPieces(colors);
         }
 // names each color
         function setPieces(colors) {
@@ -551,19 +1023,46 @@
                 if (position) {
                     let tile = document.getElementById(position)
                     let ctx = tile.getContext("2d");
-                    ctx.drawImage(chessPieces[pieces].image, 7.5, 3.75, 275, 134.5);
+                    if (chessPieces[pieces].type != 'rook') {
+                        tile.width = 20 * dpi;
+                        tile.height = 20 * dpi;
+                        ctx.drawImage(chessPieces[pieces].image, 0, 0, dim, dim);
+                    } else {
+                        let imageType;
+                        position === 'A3'|| position === 'S3' ? imageType = 'rightImage' : position === 'B18' || position === 'T18' ? imageType = 'leftImage' : position === 'C2' || position === 'C20' ? imageType = 'downImage' : imageType = 'upImage';
+                        tile.width = 20 * dpi;
+                        tile.height = 20 * dpi;
+                        ctx.drawImage(chessPieces[pieces][imageType], 0, 0, dim, dim);
+                    }
                     tile.setAttribute("class", `${chessPieces[pieces].color}Tile`);
                     tile.piece = chessPieces[pieces];
                     tile.lastColor = chessPieces[pieces].color;
                     chessPieces[pieces].currentPos = position;
                 }
             }
+            let object = {};
+            object[player1.color] = ['A2', 'B1'];
+            object[player2.color] = ['A19', 'B20'];
+            object[player3.color] = ['S1', 'T2'];
+            object[player4.color] = ['S20', 'T19'];
+            fillTerritory(object);
         }
 // gives the pieces' positions
         function createPiece(type, color, number) {
             let piece = {};
-            piece.image = new Image();
-            piece.image.src = document.getElementById(`${color}${type}`).src;
+            if (type != 'Rook') {
+                piece.image = new Image();
+                piece.image.src = document.getElementById(`${color}${type}`).src;
+            } else {
+                piece.leftImage = new Image();
+                piece.leftImage.src = document.getElementById(`${color}${type}Left`).src;
+                piece.rightImage = new Image();
+                piece.rightImage.src = document.getElementById(`${color}${type}Right`).src;
+                piece.upImage = new Image();
+                piece.upImage.src = document.getElementById(`${color}${type}Up`).src;
+                piece.downImage = new Image();
+                piece.downImage.src = document.getElementById(`${color}${type}Down`).src;
+            }
             piece.type = type.toLowerCase();
             piece.color = color;
             piece.id = `${color}${type}${number}`;
@@ -578,7 +1077,18 @@
         function moveTo(piece, square) {
             let tile = document.getElementById(square);
             let ctx = tile.getContext("2d");
-            ctx.drawImage(piece.image, 7.5, 3.75, 275, 134.5);
+            if (piece.type != 'rook') {
+                ctx.drawImage(piece.image, 0, 0, dim, dim);
+            } else {
+                let imageType;
+                if (selected.tile.id[0] != tile.id[0]) {
+                    selected.tile.id[0] < tile.id[0] ? imageType = 'downImage' : imageType = 'upImage';
+                }
+                if (Number(selected.tile.id.slice(1, 3)) != Number(tile.id.slice(1, 3))) {
+                    Number(selected.tile.id.slice(1, 3)) < Number(tile.id.slice(1, 3)) && !imageType ? imageType = 'rightImage' : imageType = 'leftImage';
+                }
+                ctx.drawImage(piece[imageType], 0, 0, dim, dim);
+            }
             tile.setAttribute("class", `${piece.color}Tile`);
             tile.lastColor = selected.piece.color;
             tile.piece = piece;
@@ -631,7 +1141,7 @@
                 jurisdiction = 'legal';
                 logCrossedTiles(moveType, piece.currentPos, square, slope);
                 if (crossedTiles.some((tile) => {
-                    return tile.piece ? true : false;
+                    return tile.piece;
                 }) && piece.type != 'knight') {
                     jurisdiction = 'illegal';
                 }
@@ -717,7 +1227,7 @@
                 let questionMark = document.getElementById('questionMark');
                 let ctx = tile.getContext("2d");
                 if (crossedTiles.indexOf(tile) != 3 && !tile.piece) {
-                    ctx.drawImage(questionMark,  7.5, 3.75, 275, 134.5);
+                    ctx.drawImage(questionMark,  0, 0, dim, dim);
                 }
             }
         }
@@ -866,7 +1376,7 @@
                         return tile.piece && tile.piece.belongsTo === square.piece.belongsTo;
                     }).forEach((tile) => {
                         captureCount ++;
-                        pieceRemoved = tile.piece;
+                        piecesRemoved.push(tile.piece);
                         if (!bot) {
                             let ctx = tile.getContext('2d');
                             ctx.clearRect(0, 0, 300, 150);
@@ -876,7 +1386,11 @@
                     })
                 } else {
                     captureCount ++;
-                    pieceRemoved = square.piece;
+                    if (square.piece.belongsTo != players.find((player) => {
+                        return player.turn === true;
+                    })) {
+                        piecesRemoved.push(square.piece);
+                    }
                     if (!bot) {
                         let ctx = square.getContext("2d");
                         ctx.clearRect(0, 0, 300, 150);
@@ -1044,7 +1558,7 @@
                 return;
             }
             let turnCounter = document.getElementById("turnCount");
-            turnCounter.innerHTML = `Turns Taken: ${turn - 1}`;
+            turnCounter.innerHTML = `Turn: ${Math.ceil((turn - 1) / 4)}`;
             let player = document.getElementById('turns');
             let rightfulColor = nextPlayer.color;
             player.childNodes[0].nodeValue = `${rightfulColor[0].toUpperCase().concat(rightfulColor.slice(1, rightfulColor.length))} Player's Turn!`;
@@ -1097,7 +1611,7 @@
 
         function displayWinningScreen(player) {
             let currentPlayer = document.getElementById('turns');
-            currentPlayer.innerHTML = `${player.color[0].toUpperCase()}${player.color.slice(1, player.color.length)} Player Wins!`;
+            currentPlayer.innerHTML = `The Kingdom of ${player.kingdomName} Wins!`;
             allTiles.forEach((tile) => {
                 tile.removeEventListener('click', click);
             });
