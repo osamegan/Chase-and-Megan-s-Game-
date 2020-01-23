@@ -685,17 +685,21 @@
                         return isTrue;
                     })) {
                     if (checkLegality(piece.piece, tile.id) === 'legal') {
+                        console.log(piece.piece.type, tile.id);
+                        tile.piece = piece.piece;
                         tile.className = piece.className
                         findPotentialInnerArea(tile);
                         tile.className = `${tile.lastColor}Tile`;
-                        tile.piece = piece.piece;
-                        let colorNumber = crossedTiles.filter((square) => {
+                        let colorNumber = crossedTiles.length/*crossedTiles.filter((square) => {
                             return square.className != tile.className;
-                        }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                        }).length */
+                        colorNumber += (piecesRemoved[0] ? piecesRemoved.map((piece) => {
                             return piece.importance;
                         }).reduce((total, current) => {
                             return total + current;
                         }) : 0);
+                        console.log(colorNumber);
+                        empty(crossedTiles);
                         for (let move of othersBestMoves) {
                             if (checkLegality(move[0], move[1]) === 'legal') {
                                 piecesRemoved = [];
@@ -714,10 +718,10 @@
                         }
                         tile.piece = null;
                         colorNumber -= otherPlayersTileCount;
+                        console.log(colorNumber);
                         comMoves.push([piece.piece, tile, piece.piece === 'knight' ? colorNumber - 3 : colorNumber, crossedTiles]);
                         otherPlayersTileCount = 0;
                     }
-                    empty(crossedTiles);
                 }
             }
             let bestMove = findBestMove(com, comMoves, comTilesToClick);
@@ -772,9 +776,6 @@
                         empty(crossedTiles);
                     }
                 }
-                console.log(otherPlayersMoves.map((move) => {
-                        return move[2];
-                }));
                 bestMoves.push(otherPlayersMoves.find((move) => {
                     return move[2] === Math.max.apply(null, otherPlayersMoves.map((move) => {
                         return move[2];
@@ -782,7 +783,6 @@
                 }).slice(0, 2));
                 otherPlayersMoves = [];
             }
-            console.log(bestMoves);
             return bestMoves;
         }
 
