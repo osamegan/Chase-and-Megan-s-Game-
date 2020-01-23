@@ -829,6 +829,16 @@
             }
         }
 
+        function findPotentialInnerArea(tile) {
+            crossedTiles.forEach((square) => {
+                square.className = tile.className;
+            });
+            findEnclosedTiles(tile);
+            crossedTiles.forEach((square) => {
+                square.className = `${square.lastColor}Tile`;
+            });
+        }
+
         function playerSelect() {
             players.push(player1, player2, player3, player4);
             document.body.removeChild(document.getElementById('rules'));
