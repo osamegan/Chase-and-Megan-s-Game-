@@ -767,7 +767,7 @@
                         otherPlayersMoves.push([pieceTile.piece, tile.id, colorNumber + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
                             return piece.importance;
                         }).reduce((total, current) => {
-                            return total + current.importance;
+                            return total + current;
                         }) : 0)]);
                         empty(crossedTiles);
                     }
