@@ -45,8 +45,6 @@
         margin: auto;
         border-collapse: collapse;
         border-spacing: 0px;
-        border-color: blue;
-        border-style: solid;
         visibility: hidden;
     }
  /* chessboard coordanites */
@@ -295,8 +293,10 @@
         <img id = "pinkRookLeft" src="images/Pink-Ghost-Left.png" alt="" height = 100px width = 100px>
         <img id = "orangeRookLeft" src="images/Orange-Ghost-Left.png" alt="" height = 100px width = 100px>
     </div>
-    <h2 id = 'rules' onclick = displayRules()>Rules</h2>
-    <h2 id = 'begin' onclick = "playerSelect()">Play Game!</h2>
+    <br>
+    <h2 id = 'rules' onclick = displayRules() style = "width: 60px; margin: auto;">Rules</h2>
+    <br>
+    <h2 id = 'begin' onclick = "playerSelect()" style = "width: 125px; margin: auto;">Play Game!</h2>
 
     <img id = "redRookLeft" src="images/Red-Ghost-Left.png" alt="" height = 0px width = 0px>
     <img id = "blueRookLeft" src="images/Blue-Ghost-Left.png" alt="" height = 0px width = 0px>
@@ -380,14 +380,12 @@
 <!-- names pictures -->
 
     <span id = 'turns' style = "color: red; visibility: hidden;">Red Player's Turn!</span>
-
     <div id = 'container' style = "visibility: hidden;" onclick = makeVisible()>
         <span id = 'turnCount' style = 'color: blue; visibility: hidden;'>Turn: 1</span>
         <span id = 'tooltip' class = 'tooltip'>See Recent Moves</span>
     </div>
 
     <table id = "chessboard"></table>
-
     <script>
         
         let board = document.getElementById("chessboard");
