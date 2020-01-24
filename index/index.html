@@ -280,6 +280,10 @@
         background-color: rgb(5, 32, 150);
     }
 
+    .nothing {
+        text-align: center;
+    }
+
     </style>
     <pre class = 'moveLog' id = 'movementLog'></pre>
     <h1 style="text-align: center;">Chess.io</h1>
@@ -379,7 +383,7 @@
     <img id = "questionMark" src = "images/Question Mark.png" alt="" height = 0px width = 0px>
 <!-- names pictures -->
 
-    <span id = 'turns' style = "color: red; visibility: hidden;">Red Player's Turn!</span>
+    <div id = 'turns' style = "color: red; visibility: hidden;">Red Player's Turn!</div>
     <div id = 'container' style = "visibility: hidden;" onclick = makeVisible()>
         <span id = 'turnCount' style = 'color: blue; visibility: hidden;'>Turn: 1</span>
         <span id = 'tooltip' class = 'tooltip'>See Recent Moves</span>
@@ -969,7 +973,7 @@
                 option.setAttribute('style', `color: ${color != "Black" && color != "Bronze" ? color.toLowerCase() : color === "Black" ? 'rgb(24, 24, 24)' : 'brown'}`);
                 choice.appendChild(option);
             }
-            choice.setAttribute('style', 'color: red');
+            choice.setAttribute('style', `color: ${choice.value.toLowerCase() != "black" && choice.value.toLowerCase() != "bronze" ? choice.value.toLowerCase() : choice.value.toLowerCase() === "black" ? 'rgb(24, 24, 24)' : 'brown'}`);
             choice.addEventListener('change', function() {
                 choice.setAttribute('style', `color: ${choice.value.toLowerCase() != "black" && choice.value.toLowerCase() != "bronze" ? choice.value.toLowerCase() : choice.value.toLowerCase() === "black" ? 'rgb(24, 24, 24)' : 'brown'}`);
             });
@@ -1680,7 +1684,17 @@
         }
 
         function displayRules() {
-            
+            let things = [document.getElementById('turns'), document.getElementById('rules'), document.getElementById('begin'), Array.from(document.getElementsByClassName('normal'))[0], Array.from(document.getElementsByClassName('normal'))[1]];
+            for (let thing of things) {
+                thing.setAttribute('style', 'visibility: hidden;');
+            }
+            let rules = document.createElement("IMG");
+            rules.src = 'images/rules.png';
+            document.body.insertBefore(rules, Array.from(document.getElementsByClassName('normal'))[0]);
+            let back = document.createElement('DIV');
+            back.innerHTML = 'Back';
+            back.setAttribute('onclick', 'location.reload(true)');
+            document.body.insertBefore(back, Array.from(document.getElementsByClassName('normal'))[0]);
         }
 
     </script>
