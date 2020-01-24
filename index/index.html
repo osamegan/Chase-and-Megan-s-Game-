@@ -295,7 +295,7 @@
         <img id = "pinkRookLeft" src="images/Pink-Ghost-Left.png" alt="" height = 100px width = 100px>
         <img id = "orangeRookLeft" src="images/Orange-Ghost-Left.png" alt="" height = 100px width = 100px>
     </div>
-    <h2 id = 'rules'>Rules</h2>
+    <h2 id = 'rules' onclick = displayRules()>Rules</h2>
     <h2 id = 'begin' onclick = "playerSelect()">Play Game!</h2>
 
     <img id = "redRookLeft" src="images/Red-Ghost-Left.png" alt="" height = 0px width = 0px>
@@ -393,7 +393,7 @@
         let board = document.getElementById("chessboard");
         board.setAttribute("class", "chessboard");
         let dpi = window.devicePixelRatio;
-        let dim = 27.5;
+        let dim = 20 * dpi;
         let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
         let chessPieces = [];
         let selected = {};
@@ -663,7 +663,7 @@
         }
 
         function comMove(com) {
-            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is thinking...`);
+            //console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is thinking...`);
             //let think = setInterval(thinking, 333);
             allTiles.forEach((tile) => {
                 tile.removeEventListener('click', click);
@@ -685,20 +685,22 @@
                         return isTrue;
                     })) {
                     if (checkLegality(piece.piece, tile.id) === 'legal') {
-                        console.log(piece.piece.type, tile.id);
                         tile.piece = piece.piece;
                         tile.className = piece.className
                         findPotentialInnerArea(tile);
                         tile.className = `${tile.lastColor}Tile`;
-                        let colorNumber = crossedTiles.length/*crossedTiles.filter((square) => {
+                        let colorNumber = crossedTiles.length;/*crossedTiles.filter((square) => {
                             return square.className != tile.className;
                         }).length */
-                        colorNumber += (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                        colorNumber += (piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                            return piece.belongsTo != com;
+                        }).map((piece) => {
                             return piece.importance;
                         }).reduce((total, current) => {
                             return total + current;
                         }) : 0);
-                        console.log(colorNumber);
+                        let tilesCrossed = [];
+                        tilesCrossed = tilesCrossed.concat(crossedTiles);
                         empty(crossedTiles);
                         for (let move of othersBestMoves) {
                             if (checkLegality(move[0], move[1]) === 'legal') {
@@ -708,38 +710,58 @@
                                 document.getElementById(move[1]).className = `${document.getElementById(move[1]).lastColor}Tile`;
                                 otherPlayersTileCount += crossedTiles.filter((square) => {
                                     return square.className != `${move[0].color}Tile`;
-                                }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                                }).length + (piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                                    return piece.belongsTo != move[0].belongsTo;
+                                }).map((piece) => {
                                     return piece.importance;
                                 }).reduce((total, current) => {
                                     return total + current;
                                 }) : 0);
                             }
                             empty(crossedTiles);
+
                         }
                         tile.piece = null;
                         colorNumber -= otherPlayersTileCount;
-                        console.log(colorNumber);
-                        comMoves.push([piece.piece, tile, piece.piece === 'knight' ? colorNumber - 3 : colorNumber, crossedTiles]);
+                        comMoves.push([piece.piece, tile, piece.piece === 'knight' ? colorNumber - 3 : colorNumber, tilesCrossed]);
                         otherPlayersTileCount = 0;
                     }
                 }
             }
+            othersBestMoves.forEach((move) => {
+                document.getElementById(move[0].currentPos).piece = null;
+                document.getElementById(move[1]).piece = move[0];
+            });
             let bestMove = findBestMove(com, comMoves, comTilesToClick);
-            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
+            othersBestMoves.forEach((move) => {
+                document.getElementById(move[0].currentPos).piece = move[0];
+                document.getElementById(move[1]).piece = null;
+            })
+            //console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is moving their piece now...`);
             allTiles.forEach((tile) => {
                 tile.addEventListener('click', click);
             });
             click(bestMove[0].currentPos);
             click(bestMove[1].id);
             if (bestMove[0].type === 'knight') {
-                crossedTiles.set(bestMove[1]);
-                /*let option1 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
+                let option1 = Array.from(document.getElementsByClassName(`${com.color}Tile`)).length;
+                option1 += piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                        return piece.belongsTo != player && Array.from(document.getElementsByClassName(`${com.color}Tile`)).includes(piece);
+                    }).map((piece) => {
+                        return piece.importance;
+                    }).reduce((total, current) => {
+                        return total + current;
+                    }) : 0;
                 crossedTiles.fill(crossedTiles[4], com.color);
-                crossedTiles.set(crossedTiles[4]);
-                let option2 = Array.from(document.getElementsByClassName(`${com.color}Tile`));
-                if (option1.length > option2.length || option1) {
-
-                }*/
+                let option2 = Array.from(document.getElementsByClassName(`${com.color}Tile`)).length;
+                option2 += piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                        return piece.belongsTo != player && Array.from(document.getElementsByClassName(`${com.color}Tile`)).includes(piece);
+                    }).map((piece) => {
+                        return piece.importance;
+                    }).reduce((total, current) => {
+                        return total + current;
+                    }) : 0;
+                option1 > option2 ? crossedTiles.set(bestMove[1]) : crossedTiles.set(crossedTiles[4]);
             }
            // clearInterval(think);
         }
@@ -761,6 +783,7 @@
                         empty(crossedTiles);
                         return isTrue;
                     })) {
+                        piecesRemoved = [];
                         checkLegality(pieceTile.piece, tile.id);
                         tile.className = pieceTile.className;
                         findPotentialInnerArea(tile);
@@ -768,7 +791,9 @@
                         let colorNumber = crossedTiles.filter((square) => {
                             return square.className != pieceTile.className;
                         }).length;
-                        otherPlayersMoves.push([pieceTile.piece, tile.id, colorNumber + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                        otherPlayersMoves.push([pieceTile.piece, tile.id, colorNumber + (piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                            return piece.belongsTo != player;
+                        }).map((piece) => {
                             return piece.importance;
                         }).reduce((total, current) => {
                             return total + current;
@@ -787,10 +812,9 @@
         }
 
         function findBestMove(com, comMoves, comTilesToClick) {
-            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is finding the best move...`);
+            //console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com is finding the best move...`);
             findBestSetup(com, comMoves, comTilesToClick);
-            console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com has just finished finding the best set-up...`);
-            console.log(comMoves);
+            //console.log(`${com.color[0].toUpperCase()}${com.color.slice(1, com.color.length)} Com has just finished finding the best set-up...`);
             return comMoves.find((move) => {
                 return move[2] === Math.max.apply(null, comMoves.map((move) => {
                     return move[2];
@@ -801,31 +825,49 @@
 
         function findBestSetup(com, comMoves, comTilesToClick) {
             for (let nextMove of comMoves) {
-                let nextTile = document.getElementById(nextMove[0].currentPos);
-                nextTile.piece  = nextMove[0];
+                nextMove[1].piece = nextMove[0];
+                let originalTile = document.getElementById(nextMove[0].currentPos);
+                originalTile.piece = null;
+                nextMove[0].currentPos = nextMove[1].id;
+                let maxColorNumber = -Infinity;
                 for (let square of allTiles.filter((tile) => {
                         let isTrue = false;
-                        if (checkLegality(nextTile.piece, tile.id) === 'legal') {
+                        if (checkLegality(nextMove[0], tile.id) === 'legal') {
                             isTrue = true;
                         }
                         empty(crossedTiles);
                         return isTrue;
                     })) {
-                        if (checkLegality(nextTile.piece, square.id) === 'legal') {
-                            square.className = nextTile.className;
+                        if (checkLegality(nextMove[0], square.id) === 'legal') {
+                            piecesRemoved = [];
+                            square.className = `${nextMove[0].color}Tile`;
+                            nextMove[1].className = square.className;
+                            nextMove[3].forEach((tile) => {
+                                crossedTiles.push(tile);
+                            });
                             findPotentialInnerArea(square);
                             square.className = `${square.lastColor}Tile`;
-                            let colorNumber = crossedTiles.filter((tile) => {
+                            nextMove[1].className = `${nextMove[1].lastColor}Tile`;
+                            let colorNumber = crossedTiles.length;/*crossedTiles.filter((tile) => {
                                 return tile.className != square.className;
-                            }).length + (piecesRemoved[0] ? piecesRemoved.map((piece) => {
+                            }).length;*/
+                            colorNumber += (piecesRemoved[0] ? piecesRemoved.filter((piece) => {
+                                return piece.belongsTo != com;
+                            }).map((piece) => {
                             return piece.importance;
                         }).reduce((total, current) => {
                             return total + current;
                         }) : 0);
-                            square.piece === 'knight' ? nextMove[2] += colorNumber - 3 : nextMove[2] += colorNumber;
+                            if (colorNumber > maxColorNumber) {
+                                nextMove[0].type === 'knight' ? maxColorNumber = colorNumber - 3 : maxColorNumber = colorNumber;
+                            }
                         }
                     empty(crossedTiles);
                 }
+                nextMove[2] += maxColorNumber;
+                nextMove[0].currentPos = originalTile.id;
+                originalTile.piece = nextMove[0];
+                nextMove[1].piece = null;
             }
         }
 
@@ -1087,9 +1129,7 @@
         function moveTo(piece, square) {
             let tile = document.getElementById(square);
             let ctx = tile.getContext("2d");
-            if (piece.type != 'rook') {
-                ctx.drawImage(piece.image, 0, 0, dim, dim);
-            } else {
+            if (piece.type === 'rook') {
                 let imageType;
                 if (selected.tile.id[0] != tile.id[0]) {
                     selected.tile.id[0] < tile.id[0] ? imageType = 'downImage' : imageType = 'upImage';
@@ -1098,6 +1138,8 @@
                     Number(selected.tile.id.slice(1, 3)) < Number(tile.id.slice(1, 3)) && !imageType ? imageType = 'rightImage' : imageType = 'leftImage';
                 }
                 ctx.drawImage(piece[imageType], 0, 0, dim, dim);
+            } else {
+                ctx.drawImage(piece.image, 0, 0, dim, dim);
             }
             tile.setAttribute("class", `${piece.color}Tile`);
             tile.lastColor = selected.piece.color;
@@ -1130,7 +1172,7 @@
             let startNumber = Number(piece.currentPos.slice(1, 3));
             let endNumber = Number(square.slice(1, 3));
             let moveType = null;
-            let slope = (letters.indexOf(piece.currentPos[0]) + 1 - (letters.indexOf(square[0]) + 1)) / (startNumber - endNumber);
+            let slope = getSlope(piece.currentPos, square);
             let ranged = null;
             let distance = findDistance(startNumber, endNumber, letters.indexOf(piece.currentPos[0]) + 1, letters.indexOf(square[0]) + 1);
             Math.abs(letters.indexOf(piece.currentPos[0]) + 1 - (letters.indexOf(square[0]) + 1)) > 1 || Math.abs(startNumber - endNumber) > 1 ? ranged = true : ranged = false;
@@ -1157,6 +1199,12 @@
                 }
             }
             return jurisdiction;
+        }
+
+        function getSlope(startId, endId) {
+            let startNumber = Number(startId.slice(1, 3));
+            let endNumber = Number(endId.slice(1, 3));
+            return (letters.indexOf(startId[0]) - (letters.indexOf(endId[0]))) / (startNumber - endNumber);
         }
 
 // checks the legality of the moves
@@ -1386,7 +1434,11 @@
                         return tile.piece && tile.piece.belongsTo === square.piece.belongsTo;
                     }).forEach((tile) => {
                         captureCount ++;
-                        piecesRemoved.push(tile.piece);
+                        if (!piecesRemoved.includes(tile.piece) && tile.piece.belongsTo != players.find((player) => {
+                            return player.turn;
+                        })) {
+                            piecesRemoved.push(tile.piece);
+                        }
                         if (!bot) {
                             let ctx = tile.getContext('2d');
                             ctx.clearRect(0, 0, 300, 150);
@@ -1397,9 +1449,11 @@
                 } else {
                     captureCount ++;
                     if (square.piece.belongsTo != players.find((player) => {
-                        return player.turn === true;
+                        return player.turn;
                     })) {
-                        piecesRemoved.push(square.piece);
+                        if (!piecesRemoved.includes(square.piece)) {
+                            piecesRemoved.push(square.piece);
+                        }
                     }
                     if (!bot) {
                         let ctx = square.getContext("2d");
@@ -1561,7 +1615,7 @@
             lastPlayer.turn = false;
             let nextPlayer = players.find((player, index, array) => {
                 return !player.defeated && isGreaterThan(index, array.indexOf(lastPlayer), array);
-            })
+            });
             nextPlayer.turn = true;
             if (nextPlayer === lastPlayer) {
                 displayWinningScreen(nextPlayer);
@@ -1627,8 +1681,8 @@
             });
         }
 
-        function start() {
-            // makes everything work
+        function displayRules() {
+            
         }
 
     </script>
