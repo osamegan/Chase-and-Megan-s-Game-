@@ -1630,9 +1630,9 @@
             player.childNodes[0].nodeValue = `${rightfulColor[0].toUpperCase().concat(rightfulColor.slice(1, rightfulColor.length))} Player's Turn!`;
             player.setAttribute("style", `color: ${rightfulColor.toLowerCase()}`);
             if (piece != 'knight') {
-                movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}${captureCount > 0 ? '!' : ''}`);
+                movements.push(`${piece.color[0].toUpperCase()}${piece.color.slice(1, piece.color.length)} ${piece.type}: ${selected.tile.id} to ${tile.id}`);
             } else {
-                movements.push(`${tile.className[0].toUpperCase()}${tile.className.slice(1, tile.className.indexOf('T'))} knight: ${crossedTiles[0].id} to ${tile.id}${captureCount > 0 ? '!' : ''}`);
+                movements.push(`${tile.className[0].toUpperCase()}${tile.className.slice(1, tile.className.indexOf('T'))} knight: ${crossedTiles[0].id} to ${tile.id}`);
             }
             if (movements.length > 32) {
                 movements.shift();
